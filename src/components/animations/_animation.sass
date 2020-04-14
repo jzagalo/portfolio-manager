@@ -1,0 +1,12 @@
+@import "animation-fade"
+
+@mixin animation-keyframes
+    @include animation-keyframes-fade
+
+@mixin animation-classes($selector, $duration: 200ms, $easing: ease-in-out)
+    #{$selector}
+        @include animation-classes-fade($duration, ease)
+
+@mixin animation-package($selector, $duration: 200ms,$easing: ease-in-out)
+    @include animation-keyframes
+    @include animation-classes($selector,$duration, $easing)
