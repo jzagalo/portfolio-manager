@@ -11,12 +11,21 @@ import { Vue, Component, Prop } from 'vue-property-decorator'
 import { Observable, Subject } from "rxjs";
 import { takeUntil } from "rxjs/operators";
 import animationClasses from "@/components/animations/_animation-classes.scss";
-import {AnimationTypes, AnimateOptions} from "@/components/animations/types";
+import {AnimationTypes, AnimateOptions, AnimationStages} from "@/components/animations/types";
 
-@Component
+@Component({
+    props: {
+        update: {
+            type: Function,
+            default: () => 1
+        },
+    }
+})
 export default class AnimatableItem extends Vue {
     @Prop() private readonly subject!: Subject<AnimateOptions>;
     @Prop({ default: "200ms"}) private readonly duration!: string;
+
+    public $props!: Vue["$props"] & { update: (x: AnimationStages) => void }
 
     private readonly animationMap = new Map<AnimationTypes, string>([
         [AnimationTypes.FadeIn, animationClasses["fadeIn"]],
@@ -52,20 +61,47 @@ export default class AnimatableItem extends Vue {
         const animation = this.animationMap.get(this.type); 
 
         this.afterCssClass = "";
-        this.beforeCssClass = this.getCssClass(`${animation}Before`);
+        this.updateWithPreAndPost(
+            AnimationStages.BeforeApplyPre,
+            AnimationStages.BeforeApplyPost,
+            () => this.beforeCssClass = this.getCssClass(`${animation}Before`)
+        );
+                
         requestAnimationFrame(() => {
-            this.activeCssClass = this.getCssClass(`${animation}Active`);
+            this.updateWithPreAndPost(
+                AnimationStages.ActiveApplyPre,
+                AnimationStages.ActiveApplyPost,
+                () => this.afterCssClass = this.getCssClass(`${animation}After`));
             requestAnimationFrame(() => {
-                this.beforeCssClass = "";
+               this.updateWithPreAndPost(
+                    AnimationStages.BeforeRemovePre,
+                    AnimationStages.BeforeRemovePost,
+                    () => this.beforeCssClass = "");
             });
         });
+
+        this.type = AnimationTypes.None;
+    }
+
+    private updateWithPreAndPost(pre: AnimationStages, post: AnimationStages, apply: () => void) {
+        this.$props.update(pre);
+        apply();
+        this.$props.update(post);
     }
 
     private animationEnd(){
         const animation = this.animationMap.get(this.type);
-        this.afterCssClass = this.getCssClass(`${animation}After`);
+
+        this.updateWithPreAndPost(
+            AnimationStages.AfterApplyPre,
+            AnimationStages.AfterApplyPost,
+            () => this.afterCssClass = this.getCssClass(`${animation}After`));
+
         requestAnimationFrame(() => {
-            this.activeCssClass = "";
+            this.updateWithPreAndPost(
+                AnimationStages.ActiveRemovePre,
+                AnimationStages.ActiveRemovePost,
+                () => this.activeCssClass = "");
         });
 
         this.type = AnimationTypes.None;
