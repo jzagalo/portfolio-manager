@@ -1,4 +1,5 @@
 @import "animation-options"
+@import "animation-classes"
 
 @mixin animation-keyframes-fade-in
     @keyframes fadeIn
@@ -19,21 +20,21 @@
     @include animation-keyframes-fade-out            
 
 @mixin animation-classes-fade-in($duration: 200ms, $easing: ease-in-out)
-    &.fade-in-active
+    &.#{$fade-in-active}
         @include animation-options($duration, $easing)
         animation-name: fadeIn
-    &.fade-in-after
+    &.#{$fade-in-after}
         opacity: 1
-    &.fade-in-before
+    &.#{$fade-in-before}
         opacity: 0
 
 @mixin animation-classes-fade-out($duration:200ms, $easing: ease-in-out)
-    &.fade-out-active
+    &.#{$fade-out-active}
         @include animation-options($duration, $easing)
         animation-name: fadeOut
-    &.fade-out-after
+    &.#{$fade-out-after}
         opacity: 0
-    &.fade-out-before
+    &.#{$fade-out-before}
         opacity: 1
 
 @mixin animation-classes-fade($duration:200ms, $easing: ease-in-out)

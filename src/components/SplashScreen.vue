@@ -14,13 +14,14 @@ import {Component, Vue, Prop } from 'vue-property-decorator';
 import AnimatableItem from "./animations/AnimatableItem.vue";
 import { Observable, Subject } from "rxjs";
 import { takeUntil } from "rxjs/operators";
-
+import animationClasses from "@/components/animations/_animation-classes.scss";
+import {AnimationTypes, AnimateOptions} from "@/components/animations/types";
 
 @Component({
      components:{AnimatableItem},
 })
 export default class SplashScreen extends Vue {
-    private readonly animationSubject = new Subject<string>();
+    private readonly animationSubject = new Subject<AnimateOptions>();
 
     private beforeDestroy(){
         this.animationSubject.complete();
@@ -28,12 +29,12 @@ export default class SplashScreen extends Vue {
 
     private mounted(){
         setTimeout(() => {
-            this.animationSubject.next("fade-out");
+            this.animationSubject.next({type: AnimationTypes.FadeOut});
         }, 2000);
     }
 
     private click(){
-        this.animationSubject.next("test");
+        this.animationSubject.next({type: AnimationTypes.FadeOut});
     }
 }
 

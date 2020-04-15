@@ -10,11 +10,20 @@
 import { Vue, Component, Prop } from 'vue-property-decorator'
 import { Observable, Subject } from "rxjs";
 import { takeUntil } from "rxjs/operators";
+import animationClasses from "@/components/animations/_animation-classes.scss";
+import {AnimationTypes, AnimateOptions} from "@/components/animations/types";
 
 @Component
 export default class AnimatableItem extends Vue {
-    @Prop() private readonly subject!: Subject<string>;
+    @Prop() private readonly subject!: Subject<AnimateOptions>;
     @Prop({ default: "200ms"}) private readonly duration!: string;
+
+    private readonly animationMap = new Map<AnimationTypes, string>([
+        [AnimationTypes.FadeIn, animationClasses["fadeIn"]],
+        [AnimationTypes.FadeOut, animationClasses["fadeOut"]]
+    ]);
+
+    private type = AnimationTypes.None
 
     private activeCssClass = "";
     private afterCssClass = "";
@@ -38,10 +47,14 @@ export default class AnimatableItem extends Vue {
                 .subscribe(this.animate);
     }
 
-     private animate(animation: string): void{
-        this.beforeCssClass = "fade-out-before";
+     private animate(options: AnimateOptions): void{
+        this.type = options.type;
+        const animation = this.animationMap.get(this.type); 
+
+        this.afterCssClass = "";
+        this.beforeCssClass = this.getCssClass(`${animation}Before`);
         requestAnimationFrame(() => {
-            this.activeCssClass = "fade-out-active";
+            this.activeCssClass = this.getCssClass(`${animation}Active`);
             requestAnimationFrame(() => {
                 this.beforeCssClass = "";
             });
@@ -49,10 +62,23 @@ export default class AnimatableItem extends Vue {
     }
 
     private animationEnd(){
-        this.afterCssClass = "fade-out-after";
+        const animation = this.animationMap.get(this.type);
+        this.afterCssClass = this.getCssClass(`${animation}After`);
         requestAnimationFrame(() => {
             this.activeCssClass = "";
         });
+
+        this.type = AnimationTypes.None;
+    }
+
+    private getCssClass(index: string){
+        const css = animationClasses[index];
+        if(typeof(css) === "undefined"){
+            console.warn(`CSS animation class for ${index} is undefined`);
+            return "";
+        }
+
+        return css;
     }
 }
 </script>
