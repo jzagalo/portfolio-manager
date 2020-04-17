@@ -1,6 +1,6 @@
 <template lang="pug">
     div.animatable(
-        v-bind:class="cssClass"
+        v-bind:class="cssClass"        
         v-bind:style="{ animationDuration: duration }"
         v-on:animationend.prevent="animationEnd" )
         slot
@@ -11,7 +11,9 @@ import { Vue, Component, Prop } from 'vue-property-decorator'
 import { Observable, Subject } from "rxjs";
 import { takeUntil } from "rxjs/operators";
 import animationClasses from "@/components/animations/_animation-classes.scss";
-import {AnimationTypes, AnimateOptions, AnimationStages} from "@/components/animations/types";
+import { AnimationTypes, AnimateOptions, AnimationStages } from "@/components/animations/types";
+import { Props } from "@/components/animations/types";
+
 
 @Component({
     props: {
@@ -19,13 +21,20 @@ import {AnimationTypes, AnimateOptions, AnimationStages} from "@/components/anim
             type: Function,
             default: () => 1
         },
+        complete: {
+            type: Function,
+            default: () => { return; },
+        },
     }
 })
 export default class AnimatableItem extends Vue {
     @Prop() private readonly subject!: Subject<AnimateOptions>;
     @Prop({ default: "200ms"}) private readonly duration!: string;
 
-    public $props!: Vue["$props"] & { update: (x: AnimationStages) => void }
+    public $props!: Props<{ 
+        complete: () => void;
+        update: (x: AnimationStages) => void;  
+    }>;
 
     private readonly animationMap = new Map<AnimationTypes, string>([
         [AnimationTypes.FadeIn, animationClasses["fadeIn"]],
@@ -58,29 +67,29 @@ export default class AnimatableItem extends Vue {
 
      private animate(options: AnimateOptions): void{
         this.type = options.type;
-        const animation = this.animationMap.get(this.type); 
+        const animation = this.animationMap.get(this.type);
 
         this.afterCssClass = "";
         this.updateWithPreAndPost(
             AnimationStages.BeforeApplyPre,
             AnimationStages.BeforeApplyPost,
-            () => this.beforeCssClass = this.getCssClass(`${animation}Before`)
-        );
-                
+            () => this.beforeCssClass = this.getCssClass(`${animation}Before`));
+        
         requestAnimationFrame(() => {
             this.updateWithPreAndPost(
                 AnimationStages.ActiveApplyPre,
                 AnimationStages.ActiveApplyPost,
-                () => this.afterCssClass = this.getCssClass(`${animation}After`));
+                () => this.activeCssClass = this.getCssClass(`${animation}Active`));
+            
             requestAnimationFrame(() => {
-               this.updateWithPreAndPost(
+                this.updateWithPreAndPost(
                     AnimationStages.BeforeRemovePre,
                     AnimationStages.BeforeRemovePost,
                     () => this.beforeCssClass = "");
             });
         });
 
-        this.type = AnimationTypes.None;
+        this.$emit("animation-end");
     }
 
     private updateWithPreAndPost(pre: AnimationStages, post: AnimationStages, apply: () => void) {
@@ -104,16 +113,20 @@ export default class AnimatableItem extends Vue {
                 () => this.activeCssClass = "");
         });
 
+        this.$props.complete();
+        this.$props.update(AnimationStages.Complete);
+
         this.type = AnimationTypes.None;
     }
 
     private getCssClass(index: string){
         const css = animationClasses[index];
-        if(typeof(css) === "undefined"){
-            console.warn(`CSS animation class for ${index} is undefined`);
+        
+        if (typeof(css) === "undefined") {
+            // tslint:disable-next-line:no-console
+            console.warn(`CSS animation class for ${index} is undefined.`);
             return "";
         }
-
         return css;
     }
 }

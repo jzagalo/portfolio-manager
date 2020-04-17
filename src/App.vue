@@ -4,16 +4,17 @@ div#app
   div#nav
     router-link(to="/") Home
     router-link(to="/about") about
-  router-view  
+  RouterOutlet/
 
 </template>
 
 <script>
 import { Vue, Component } from "vue-property-decorator";
 import SplashScreen from "./components/SplashScreen";
+import RouterOutlet from "@/components/routing/TheRouterOutlet.vue";
 
 @Component({
-  components: { SplashScreen }
+  components: { SplashScreen, RouterOutlet }
 })
 export default class App extends Vue {}
 </script>

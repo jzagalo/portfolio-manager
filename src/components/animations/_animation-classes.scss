@@ -1,9 +1,10 @@
-$fade-in-active: fade-in-active;
-$fade-in-after: fade-in-after;
-$fade-in-before: fade-in-before;
+$fade-in-active : fade-in-active;
+$fade-in-after  : fade-in-after;
+$fade-in-before : fade-in-before;
 $fade-out-active: fade-out-active;
-$fade-out-after: fade-out-after;
+$fade-out-after : fade-out-after;
 $fade-out-before: fade-out-before;
+
 
 :export {
     fadeIn       : fadeIn;
@@ -13,5 +14,5 @@ $fade-out-before: fade-out-before;
     fadeOut      : fadeOut;
     fadeOutActive: $fade-out-active;
     fadeOutAfter : $fade-out-after;
-    fadeOutBefore: $fade-out-before;
+    fadeOutBefore: $fade-out-before;   
 }

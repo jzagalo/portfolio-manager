@@ -1,6 +1,9 @@
 <template lang="pug">
     AnimatableItem.splash-screen(
             v-bind:subject="animationSubject"
+            v-bind:complete="animationComplete"
+            v-bind:update="updateAnimationStage"
+            v-if="!isAnimatedOut"
             v-bind:duration="'500ms'"
         )
         img(alt="Vue logo" src="../assets/logo.png")
@@ -15,13 +18,22 @@ import AnimatableItem from "./animations/AnimatableItem.vue";
 import { Observable, Subject } from "rxjs";
 import { takeUntil } from "rxjs/operators";
 import animationClasses from "@/components/animations/_animation-classes.scss";
-import {AnimationTypes, AnimateOptions} from "@/components/animations/types";
+import {AnimationTypes, AnimateOptions, AnimationStages} from "@/components/animations/types";
 
 @Component({
      components:{AnimatableItem},
 })
 export default class SplashScreen extends Vue {
     private readonly animationSubject = new Subject<AnimateOptions>();
+    private isAnimatedOut = false;
+
+    private updateAnimationStage(stage: AnimationStages){
+        switch(stage) {
+            case AnimationStages.AfterApplyPost:
+                this.isAnimatedOut = true;
+                break;
+        }
+    }
 
     private beforeDestroy(){
         this.animationSubject.complete();
@@ -35,6 +47,10 @@ export default class SplashScreen extends Vue {
 
     private click(){
         this.animationSubject.next({type: AnimationTypes.FadeOut});
+    }
+
+    private animationComplete(){
+        this.isAnimatedOut = true;
     }
 }
 

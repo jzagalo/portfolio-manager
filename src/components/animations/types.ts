@@ -1,7 +1,13 @@
+import Vue from "vue";
+
 export enum AnimationTypes {
     None,
     FadeIn,
-    FadeOut
+    FadeOut,
+    TranslateInFromLeft,
+    TranslateInFromRight,
+    TranslateOutToLeft,
+    TranslateOutToRight,
 }
 
 export interface AnimateOptions {
@@ -19,4 +25,13 @@ export enum AnimationStages {
     BeforeApplyPre,
     BeforeRemovePost,
     BeforeRemovePre,
+    Complete,
+    
+}
+
+export type Props<T extends object> = Vue["$props"] & T;
+
+export enum Routes {
+    About,
+    Home
 }
