@@ -11,12 +11,14 @@ Vue.use(Router);
 const home = new RouteEntry({
     component: Home,
     name: "home",
+    parent: null,
     path: "/",
 });
 
 const about = new RouteEntry({
     component: () => import(/* webpackChunkName: "about" */ "../../views/About.vue"),
     name: "about",
+    parent: home,
     path: "/about",   
 });
 

@@ -3,11 +3,13 @@
 
 @mixin animation-keyframes
     @include animation-keyframes-fade
+    @include animation-keyframes-translate;
 
 
 @mixin animation-classes($selector, $duration: 200ms, $easing: ease-in-out)
     #{$selector}
         @include animation-classes-fade($duration, ease)
+        @include animation-classes-translate($duration, $easing)
        
 
 @mixin animation-package($selector, $duration: 200ms,$easing: ease-in-out)

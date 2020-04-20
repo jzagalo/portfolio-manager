@@ -13,7 +13,7 @@ export default class About extends Vue{
   @Inject() private readonly routingService!: RoutingService;
 
   private mounted(){
-    this.routingService.navigateTo(Routes.Home);
+    //this.routingService.navigateTo(Routes.Home);
   }
 
   private click(){

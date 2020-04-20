@@ -5,6 +5,29 @@ $fade-out-active: fade-out-active;
 $fade-out-after : fade-out-after;
 $fade-out-before: fade-out-before;
 
+$translateInFromLeftAct : translate-in-from-left;
+$translateInFromRight: translate-in-from-right;
+$translateOutToLeft  : translate-out-to-left;
+$translateOutToRight : translate-out-to-right;
+
+$translate-in-from-left-active:translate-in-from-left-active;
+$translate-in-from-left-after:translate-in-from-left-after;
+$translate-in-from-left-before:translate-in-from-left-before;
+
+$translate-in-from-right-active: translate-in-from-right-active;
+$translate-in-from-right-after: translate-in-from-right-after;
+$translate-in-from-right-before: translate-in-from-right-before;
+
+$translate-out-to-left-active: translate-out-to-left-active;
+$translate-out-to-left-after: translate-out-to-left-after;
+$translate-out-to-left-before: translate-out-to-left-before;
+
+$translate-out-to-right-active: translate-out-to-right-active;
+$translate-out-to-right-after: translate-out-to-right-after;
+$translate-out-to-right-before: translate-out-to-right-before;
+
+
+
 
 :export {
     fadeIn       : fadeIn;
@@ -14,5 +37,21 @@ $fade-out-before: fade-out-before;
     fadeOut      : fadeOut;
     fadeOutActive: $fade-out-active;
     fadeOutAfter : $fade-out-after;
-    fadeOutBefore: $fade-out-before;   
+    fadeOutBefore: $fade-out-before;  
+    translateInFromLeft: translateInFromLeft;
+    translateInFromLeftActive:$translate-in-from-left-active;
+    translateInFromLeftAfter : $translate-in-from-left-after;
+    translateInFromLeftBefore: $translate-in-from-left-before;
+    translateInFromRight: translateInFromRight; 
+    translateInFromRightActive: $translate-in-from-right-active;
+    translateInFromRightAfter: $translate-in-from-right-after;
+    translateInFromRightBefore: $translate-in-from-right-before;
+    translateOutToLeft:translateOutToLeft;
+    translateOutToLeftActive: $translate-out-to-left-active;
+    translateOutToLeftAfter: $translate-out-to-left-after;
+    translateOutToLeftBefore: $translate-out-to-left-before;
+    translateOutToRight: translateOutToRight;
+    translateOutToRightActive: $translate-out-to-right-active;
+    translateOutToRightAfter: $translate-out-to-right-after;
+    translateOutToRightBefore: $translate-out-to-right-before;
 }

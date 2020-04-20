@@ -7,13 +7,14 @@ export interface RouteEntryConfig {
     component: any;
     name: string;
     path: string;
-   
+    parent: RouteEntry | null;   
 }
 
 export class RouteEntry{
     private readonly _component: VueConstructor<Vue> | VuePromiseFn;
     private readonly _name: string;
     private readonly _path: string;
+    private readonly _parent: RouteEntry | null;
 
     public get component(){
         return this._component;
@@ -34,6 +35,11 @@ export class RouteEntry{
         this._component = config.component;
         this._name = config.name;
         this._path = config.path;
+        this._parent = config.parent;
+    }
+
+    public isChildOf(entry: RouteEntry) {
+        return this._parent === entry;
     }
 
 }

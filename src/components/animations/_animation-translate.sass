@@ -1,0 +1,75 @@
+@mixin animation-keyframes-translate-in-from-left
+    @keyframes translateInFromLeft
+        from
+            transform: translateX(-100%)
+        to
+            transform: translateX(0)
+
+@mixin animation-keyframes-translate-in-from-right
+    @keyframes translateInFromRight
+        from
+            transform: translateX(100%)
+        to
+            transform: translateX(0)
+
+@mixin animation-keyframes-translate-out-to-left
+    @keyframes translateOutToLeft
+        from 
+            transform: translateX(0)
+        to
+            transform: translateX(-100%)
+
+@mixin animation-keyframes-translate-out-to-right
+    @keyframes translateOutToRight
+        from 
+            transform: translateX(0)
+        to
+            transform: translateX(100%)
+
+@mixin animation-keyframes-translate
+    @include animation-keyframes-translate-in-from-left
+    @include animation-keyframes-translate-in-from-right
+    @include animation-keyframes-translate-out-to-left
+    @include animation-keyframes-translate-out-to-right
+
+@mixin animation-classes-translate-in-from-left($duration: 200ms, $easing: ease-in-out)
+    &.#{$translate-in-from-left-active}
+        @include animation-options($duration, $easing)
+        animation-name: translateInFromLeft
+    &.#{$translate-in-from-left-after}
+        transform: translateX(0)
+    &.#{$translate-in-from-left-before}
+        transform: translateX(-100%)
+
+@mixin animation-classes-translate-in-from-right($duration: 200ms, $easing: ease-in-out)
+    &.#{$translate-in-from-right-active}
+        @include animation-options($duration, $easing)
+        animation-name: translateInFromRight
+    &.#{$translate-in-from-right-after}
+        transform: translateX(0)
+    &.#{$translate-in-from-right-before}
+        transform: translateX(100%)
+
+@mixin animation-classes-translate-out-to-left($duration: 200ms, $easing: ease-in-out)
+    &.#{$translate-out-to-left-active}
+        @include animation-options($duration, $easing)
+        animation-name: translateOutToLeft
+    &.#{$translate-out-to-left-after}
+        transform: translateX(-100%)
+    &.#{$translate-out-to-left-before}
+        transform: translateX(0)
+
+@mixin animation-classes-translate-out-to-right($duration: 200ms, $easing: ease-in-out)
+    &.#{$translate-out-to-right-active}
+        @include animation-options($duration, $easing)
+        animation-name: translateOutToRight
+    &.#{$translate-out-to-right-after}
+        transform: translateX(100%)
+    &.#{$translate-out-to-right-before}
+        transform: translateX(0)
+
+@mixin animation-classes-translate($duration: 200ms, $easing: ease-in-out)
+    @include animation-classes-translate-in-from-left($duration, $easing)
+    @include animation-classes-translate-in-from-right($duration, $easing)
+    @include animation-classes-translate-out-to-left($duration, $easing)
+    @include animation-classes-translate-out-to-right($duration, $easing)

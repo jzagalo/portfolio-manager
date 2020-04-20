@@ -38,7 +38,11 @@ export default class AnimatableItem extends Vue {
 
     private readonly animationMap = new Map<AnimationTypes, string>([
         [AnimationTypes.FadeIn, animationClasses["fadeIn"]],
-        [AnimationTypes.FadeOut, animationClasses["fadeOut"]]
+        [AnimationTypes.FadeOut, animationClasses["fadeOut"]],
+        [AnimationTypes.TranslateInFromLeft, animationClasses["translateInFromLeft"]],
+        [AnimationTypes.TranslateInFromRight, animationClasses["translateInFromRight"]],
+        [AnimationTypes.TranslateOutToLeft, animationClasses["translateOutToLeft"]],
+        [AnimationTypes.TranslateOutToRight, animationClasses["translateOutToRight"]]
     ]);
 
     private type = AnimationTypes.None
@@ -66,8 +70,10 @@ export default class AnimatableItem extends Vue {
     }
 
      private animate(options: AnimateOptions): void{
+        console.log(options.type + " OT");
         this.type = options.type;
         const animation = this.animationMap.get(this.type);
+        console.log(animation + "..hh." + this.animationMap.get(5));
 
         this.afterCssClass = "";
         this.updateWithPreAndPost(
@@ -120,8 +126,9 @@ export default class AnimatableItem extends Vue {
     }
 
     private getCssClass(index: string){
+        console.log(index + " ..@");
         const css = animationClasses[index];
-        
+        console.log(css + "--");
         if (typeof(css) === "undefined") {
             // tslint:disable-next-line:no-console
             console.warn(`CSS animation class for ${index} is undefined.`);

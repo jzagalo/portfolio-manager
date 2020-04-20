@@ -25,8 +25,7 @@ export enum AnimationStages {
     BeforeApplyPre,
     BeforeRemovePost,
     BeforeRemovePre,
-    Complete,
-    
+    Complete,    
 }
 
 export type Props<T extends object> = Vue["$props"] & T;

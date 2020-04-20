@@ -34,10 +34,26 @@ export default class TheRouterOutlet extends Vue{
     private animate(route: Routes){
         this.isAnimatingOut = true;
         this.toEntry = this.routingService.find(route);
+        this.animationSubject.next({ type: AnimationTypes.TranslateOutToLeft });
+        const from = this.routingService.current;
+        
+        if (from.isChildOf(this.toEntry)) {
+            console.log("to-from" +"TOTR");
+            this.inAnimation = AnimationTypes.TranslateInFromLeft;
+            this.animationSubject.next({ type: AnimationTypes.TranslateOutToRight });
+        } else if (this.toEntry.isChildOf(from)) {
+            console.log("to-from" +"TOTL");
+            this.inAnimation = AnimationTypes.TranslateInFromRight;
+            this.animationSubject.next({ type: AnimationTypes.TranslateOutToLeft });
+        } else {
+            console.log("Fade " +"TOTR");
+            this.inAnimation = AnimationTypes.FadeIn;
+            this.animationSubject.next({ type: AnimationTypes.FadeOut });
+        }
     }
 
     private animationComplete(){
-        if(this.isAnimatingIn){
+         if(this.isAnimatingIn){
             this.isAnimatingIn = false;
         }
         
@@ -46,10 +62,19 @@ export default class TheRouterOutlet extends Vue{
         if(this.isAnimatingOut === false){
             return;
         }
+       this.isAnimatingOut = false;
+       this.$router.push(this.toEntry.path);
+       console.log(this.inAnimation + " inA");
+       this.animationSubject.next({ type: this.inAnimation });
+       this.inAnimation = AnimationTypes.None; 
+
+       /* if (this.isAnimatingOut === false) {
+            return;
+        }
+
         this.isAnimatingOut = false;
         this.$router.push(this.toEntry.path);
-       this.animationSubject.next({ type: this.inAnimation });
-        this.inAnimation = AnimationTypes.None;
+        this.animationSubject.next({ type: AnimationTypes.FadeIn });*/
     }
 
     private beforeDestroy(){
