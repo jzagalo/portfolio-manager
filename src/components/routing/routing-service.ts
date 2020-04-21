@@ -95,6 +95,10 @@ export class RoutingService {
     }
 
     public navigateTo = (to: Routes) => {
+        if(this.current.isSameRoute(to)){
+            return;
+        }
+        
         this._navigate.next(to)
     }
 }

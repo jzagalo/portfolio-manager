@@ -28,6 +28,7 @@ import { AnimationSubject } from "@/components/animations";
         },
     }
 })
+
 export default class AnimatableItem extends Vue {
     @Prop() private readonly subject!: AnimationSubject;
     @Prop({ default: "200ms"}) private readonly duration!: string;

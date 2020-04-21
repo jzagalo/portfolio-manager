@@ -35,6 +35,7 @@ export default class App extends Vue {}
   grid-template-rows: auto minmax(0, 1fr) auto
   grid-template-areas: "app-app-bar" "app-router-outlet" "app-main-nav"
   height: 100%
+  overflow: hidden
 
 .app-app-bar
   grid-area: app-app-bar
@@ -45,6 +46,10 @@ export default class App extends Vue {}
 
 .app-main-nav
   grid-area: app
+  position: absolute
+  bottom: 0
+  left: 45%   
+
 
   #nav
     padding: 30px

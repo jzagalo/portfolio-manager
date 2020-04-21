@@ -45,16 +45,13 @@ export default class TheRouterOutlet extends Vue{
         this.animationSubject.next(AnimationTypes.TranslateOutToLeft);
         const from = this.routingService.current;
         
-        if (from.isChildOf(this.toEntry)) {
-            console.log("to-from" +"TOTR");
+        if (from.isChildOf(this.toEntry)) {            
             this.inAnimation = AnimationTypes.TranslateInFromLeft;
             this.animationSubject.next(AnimationTypes.TranslateOutToRight, this.animationsOptionsOut);
-        } else if (this.toEntry.isChildOf(from)) {
-            console.log("to-from" +"TOTL");
+        } else if (this.toEntry.isChildOf(from)) {            
             this.inAnimation = AnimationTypes.TranslateInFromRight;
             this.animationSubject.next(AnimationTypes.TranslateOutToLeft, this.animationsOptionsOut);
-        } else {
-            console.log("Fade " +"TOTR");
+        } else {            
             this.inAnimation = AnimationTypes.FadeIn;
             this.animationSubject.next(AnimationTypes.FadeOut, this.animationsOptionsOut);
         }
@@ -71,18 +68,9 @@ export default class TheRouterOutlet extends Vue{
             return;
         }
        this.isAnimatingOut = false;
-       this.$router.push(this.toEntry.path);
-       console.log(this.inAnimation + " inA");
+       this.$router.push(this.toEntry.path);    
        this.animationSubject.next(this.inAnimation);
        this.inAnimation = AnimationTypes.None; 
-
-       /* if (this.isAnimatingOut === false) {
-            return;
-        }
-
-        this.isAnimatingOut = false;
-        this.$router.push(this.toEntry.path);
-        this.animationSubject.next({ type: AnimationTypes.FadeIn });*/
     }
 
      private animationCompleteOut() {

@@ -8,18 +8,21 @@ div.app-bar
                 icon="angle-left"
                 size="lg"
             )/
-        div.title PortFolio Balance
-        button.cog
-            FontAwesomeIcon(icon="cog")
-        
+        div.title PortFolio Balancer        
+        TheAppBarSettings/        
 </template>
 
 <script lang="ts">
 import { Vue, Component, Inject } from 'vue-property-decorator';
 import { RoutingService, Routes } from './routing';
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
+import TheAppBarSettings from "@/components/app-bar/TheAppBarSettings.vue";
 
-@Component
+@Component({
+    components: {
+        TheAppBarSettings,
+    }
+})
 export default class TheAppBar extends Vue {
     @Inject() private readonly routingService!: RoutingService;
 
@@ -45,6 +48,7 @@ export default class TheAppBar extends Vue {
 
 <style lang="sass" scoped>
 .app-bar
+    z-index: 9000
     .container
         display: flex
         flex-direction: row

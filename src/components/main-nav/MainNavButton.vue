@@ -1,5 +1,5 @@
 <template lang="pug">
-    button(v-on:click.prevent="click")
+    button.button-icon(v-on:click.prevent="click")
         FontAwesomeIcon(v-bind:icon="icon")
         label {{ label }}
 </template>
@@ -27,9 +27,13 @@ export default class MainNavButton extends Vue {
 
 <style lang="sass" scoped>
     .main-nav-button
-        padding: 0.75rem 1rem
+        padding: 0.75rem 1rem        
     .button-icon
         margin-bottom: 0.25rem
+        padding: 0.75rem 1rem 
+        background: #5848b4
+        border: 0
+        color: #fff
     .button-label
         margin-bottom: 0
 </style>

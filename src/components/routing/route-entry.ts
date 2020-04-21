@@ -48,4 +48,8 @@ export class RouteEntry{
         return this._parent === entry;
     }
 
+    public isSameRoute = (route: Routes) => {
+        return this._route === route;
+    }
+
 }
