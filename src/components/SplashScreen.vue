@@ -15,7 +15,7 @@
 <script lang="ts">
 import {Component, Vue, Prop } from 'vue-property-decorator';
 import AnimatableItem from "./animations/AnimatableItem.vue";
-import { Observable, Subject } from "rxjs";
+import { AnimationSubject } from "@/components/animations";
 import { takeUntil } from "rxjs/operators";
 import animationClasses from "@/components/animations/_animation-classes.scss";
 import {AnimationTypes, AnimateOptions, AnimationStages} from "@/components/animations/types";
@@ -24,7 +24,7 @@ import {AnimationTypes, AnimateOptions, AnimationStages} from "@/components/anim
      components:{AnimatableItem},
 })
 export default class SplashScreen extends Vue {
-    private readonly animationSubject = new Subject<AnimateOptions>();
+    private readonly animationSubject = new AnimationSubject();
     private isAnimatedOut = false;
 
     private updateAnimationStage(stage: AnimationStages){
@@ -41,12 +41,12 @@ export default class SplashScreen extends Vue {
 
     private mounted(){
         setTimeout(() => {
-            this.animationSubject.next({type: AnimationTypes.FadeOut});
+            this.animationSubject.next(AnimationTypes.FadeOut);
         }, 2000);
     }
 
     private click(){
-        this.animationSubject.next({type: AnimationTypes.FadeOut});
+        this.animationSubject.next(AnimationTypes.FadeOut);
     }
 
     private animationComplete(){

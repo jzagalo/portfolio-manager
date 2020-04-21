@@ -7,12 +7,13 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component, Prop } from 'vue-property-decorator'
-import { Observable, Subject } from "rxjs";
+import { Vue, Component, Prop } from 'vue-property-decorator';
+import { Subject } from "rxjs";
 import { takeUntil } from "rxjs/operators";
 import animationClasses from "@/components/animations/_animation-classes.scss";
 import { AnimationTypes, AnimateOptions, AnimationStages } from "@/components/animations/types";
 import { Props } from "@/components/animations/types";
+import { AnimationSubject } from "@/components/animations";
 
 
 @Component({
@@ -28,7 +29,7 @@ import { Props } from "@/components/animations/types";
     }
 })
 export default class AnimatableItem extends Vue {
-    @Prop() private readonly subject!: Subject<AnimateOptions>;
+    @Prop() private readonly subject!: AnimationSubject;
     @Prop({ default: "200ms"}) private readonly duration!: string;
 
     public $props!: Props<{ 
@@ -45,35 +46,30 @@ export default class AnimatableItem extends Vue {
         [AnimationTypes.TranslateOutToRight, animationClasses["translateOutToRight"]]
     ]);
 
-    private type = AnimationTypes.None
-
     private activeCssClass = "";
     private afterCssClass = "";
     private beforeCssClass = "";
     private readonly unsubscribe = new Subject<void>();
+    private options: AnimateOptions = { type: AnimationTypes.None };
 
     private get cssClass(){
         return `${this.beforeCssClass} ${this.activeCssClass} ${this.afterCssClass}`
     }
 
-    private beforeDestroy(){
-        console.log("destroyed");
+    private beforeDestroy(){     
         this.unsubscribe.next();
         this.unsubscribe.complete();
     }
 
     private created(){
-        this.subject
-                .asObservable()
+        this.subject.asObservable()
                 .pipe(takeUntil(this.unsubscribe))
                 .subscribe(this.animate);
     }
 
-     private animate(options: AnimateOptions): void{
-        console.log(options.type + " OT");
-        this.type = options.type;
-        const animation = this.animationMap.get(this.type);
-        console.log(animation + "..hh." + this.animationMap.get(5));
+    private animate(options: AnimateOptions): void{       
+        this.options = options;
+        const animation = this.animationMap.get(this.options.type);       
 
         this.afterCssClass = "";
         this.updateWithPreAndPost(
@@ -105,7 +101,7 @@ export default class AnimatableItem extends Vue {
     }
 
     private animationEnd(){
-        const animation = this.animationMap.get(this.type);
+        const animation = this.animationMap.get(this.options.type);
 
         this.updateWithPreAndPost(
             AnimationStages.AfterApplyPre,
@@ -117,18 +113,20 @@ export default class AnimatableItem extends Vue {
                 AnimationStages.ActiveRemovePre,
                 AnimationStages.ActiveRemovePost,
                 () => this.activeCssClass = "");
+
+                if (typeof(this.options.complete) !== "undefined") {
+                    this.options.complete();
+                }
         });
 
         this.$props.complete();
         this.$props.update(AnimationStages.Complete);
 
-        this.type = AnimationTypes.None;
+        this.options.type = AnimationTypes.None;
     }
 
-    private getCssClass(index: string){
-        console.log(index + " ..@");
-        const css = animationClasses[index];
-        console.log(css + "--");
+    private getCssClass(index: string){     
+        const css = animationClasses[index];        
         if (typeof(css) === "undefined") {
             // tslint:disable-next-line:no-console
             console.warn(`CSS animation class for ${index} is undefined.`);

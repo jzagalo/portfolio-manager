@@ -10,7 +10,11 @@ export enum AnimationTypes {
     TranslateOutToRight,
 }
 
-export interface AnimateOptions {
+export interface AnimationSubjectOptions{
+    complete?: () => void;
+}
+
+export interface AnimateOptions extends AnimationSubjectOptions {
     type: AnimationTypes;
 }
 
