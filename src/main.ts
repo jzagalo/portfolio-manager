@@ -4,6 +4,7 @@ import './registerServiceWorker'
 import router from './router'
 import store from './store'
 import { RoutingService } from "@/components/routing/routing-service";
+import "@/features/font-awesome";
 
 Vue.config.productionTip = false
 

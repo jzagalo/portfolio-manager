@@ -13,23 +13,25 @@ const home = new RouteEntry({
     name: "home",
     parent: null,
     path: "/",
+    route: Routes.Home
 });
 
 const about = new RouteEntry({
     component: () => import(/* webpackChunkName: "about" */ "../../views/About.vue"),
     name: "about",
     parent: home,
-    path: "/about",   
+    path: "/about",  
+    route: Routes.About 
 });
 
 export class RoutingService {
     private readonly _navigate = new Subject<Routes>();
-    private readonly _navigate$ = this._navigate.asObservable();
+    private readonly _navigate$ = this._navigate.asObservable();  
 
     private readonly _routes = new Map<Routes, RouteEntry>([
         [Routes.About, about],
         [Routes.Home, home ]
-    ]);
+    ]);  
 
     private readonly _values = Array.from(this._routes.values());
     private readonly _router = new Router({
@@ -37,6 +39,14 @@ export class RoutingService {
         mode: "history",
         routes: this._values.map((x) => x.config)
     });
+
+    public back = () =>{
+        const parent = this.current.parent;
+        if(parent === null){
+            return;
+        }
+        this.navigateTo(parent.route);
+    }
 
     public get current() {
         return this.entryByName(this.router.currentRoute.name as string);
@@ -57,6 +67,19 @@ export class RoutingService {
         }
 
         return route;
+    }
+
+    private readonly _currentPromise = new Promise<RouteEntry>((resolve, _) =>{
+        this._router.onReady(() => resolve(this.current));
+    })
+
+    public async isCurrentRouteAsync(route: Routes){
+        const current = await this.currentAsync;
+        return current.route === route;
+    }
+
+    public get currentAsync(){
+        return this._currentPromise;
     }
 
     public get router(){

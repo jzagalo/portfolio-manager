@@ -1,7 +1,6 @@
 <template lang="pug">
   div.about
-    h1 This is an about page
-    button(v-on:click.prevent="click") Test    
+    h1 This is an about page      
 </template>
 
 <script lang="ts">
@@ -14,11 +13,7 @@ export default class About extends Vue{
 
   private mounted(){
     //this.routingService.navigateTo(Routes.Home);
-  }
-
-  private click(){
-    this.routingService.navigateTo(Routes.Home);
-  }
+  } 
   
 }
 </script>
