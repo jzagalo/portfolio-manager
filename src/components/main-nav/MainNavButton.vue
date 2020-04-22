@@ -9,7 +9,6 @@ import { Vue, Component, Inject, Prop } from 'vue-property-decorator';
 import { Routes, RoutingService } from "@/components/routing";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 
-
 @Component
 export default class MainNavButton extends Vue {
     @Inject() private readonly routingService!: RoutingService;
