@@ -24,13 +24,22 @@ const about = new RouteEntry({
     route: Routes.About 
 });
 
+const accounts = new RouteEntry({
+    component: () => import(/* webpackChunkName: "about" */ "../../views/Accounts.vue"),
+    name: "accounts",
+    parent: home,
+    path: "/accounts",  
+    route: Routes.Accounts 
+});
+
 export class RoutingService {
     private readonly _navigate = new Subject<Routes>();
     private readonly _navigate$ = this._navigate.asObservable();  
 
     private readonly _routes = new Map<Routes, RouteEntry>([
         [Routes.About, about],
-        [Routes.Home, home ]
+        [Routes.Home, home ],       
+        [Routes.Accounts, accounts ]
     ]);  
 
     private readonly _values = Array.from(this._routes.values());

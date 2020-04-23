@@ -36,5 +36,8 @@ export type Props<T extends object> = Vue["$props"] & T;
 
 export enum Routes {
     About,
-    Home
+    Home,
+    Accounts
 }
+
+export type Refs<T extends object> = Vue["$refs"] & T;

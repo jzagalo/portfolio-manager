@@ -101,9 +101,12 @@ export default class TheRouterOutlet extends Vue{
 
 <style lang="sass" scoped>
     .router-view
+        display: flex
+        flex-direction: column
         height: 100%
         &.is-animating
             overflow-x: hidden
     .router-view-animatable
-        height: 100%
+        flex: 1
+        
 </style>
