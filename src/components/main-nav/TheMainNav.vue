@@ -5,11 +5,7 @@
             v-bind:label="'Home'"
             v-bind:route="home"
         )
-        MainNavButton(
-            v-bind:icon="'wallet'"
-            v-bind:label="'About'"
-            v-bind:route="about"
-        )
+      
         MainNavButton(
             v-bind:icon="'wallet'"
             v-bind:label="'Accounts'"

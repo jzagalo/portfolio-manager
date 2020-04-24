@@ -16,9 +16,21 @@ export default class MainNavButton extends Vue {
     @Prop() private readonly icon!: string;
     @Prop({ default: "undefined" }) private readonly label!: string;
     @Prop() private readonly route!: Routes;
+    private isActive = false;
+
+    private async created(){
+        this.isActive = await this.routingService.isCurrentRouteAsync(this.route);
+        this.routingService
+            .navigateBack$
+            .subscribe(this.setActive);
+    }
 
     private click(){
         this.routingService.navigateTo(this.route);
+    }
+
+    private setActive(route: Routes){
+        this.isActive = this.route === route;
     }
     
 }
@@ -26,7 +38,11 @@ export default class MainNavButton extends Vue {
 
 <style lang="sass" scoped>
     .main-nav-button
-        padding: 0.75rem 1rem        
+        padding: 0.75rem 1rem  
+
+        &:hover, &:focus
+            color: #ccc;
+
     .button-icon
         margin-bottom: 0.25rem
         padding: 0.75rem 1rem 
@@ -35,4 +51,16 @@ export default class MainNavButton extends Vue {
         color: #fff
     .button-label
         margin-bottom: 0
+        cursor: pointer
+    .active
+        background-color: #fff;
+        color: violet
+        cursor: initial
+
+        &:hover, &:focus
+            color: teal;
+
+        label
+            cursor: initial
+
 </style>

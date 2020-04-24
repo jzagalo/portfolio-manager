@@ -8,7 +8,7 @@ import "@/features/font-awesome";
 
 Vue.config.productionTip = false
 
-const routingService = new RoutingService();
+const routingService = new RoutingService(store);
 
 new Vue({
   provide: {

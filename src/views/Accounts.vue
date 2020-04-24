@@ -25,7 +25,7 @@
 
 <script lang="ts">
 import { Vue, Component } from 'vue-property-decorator';
-import { IAccountState, State, Action, 
+import { IAccountState, State, Action, ActionFn, STATE_ACCOUNTS,
         ACTION_ADD_ACCOUNT, AddAccountPayload,
         RemoveAccountPayload, ACTION_REMOVE_ACCOUNT } from '../store';
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
@@ -33,14 +33,14 @@ import { Refs } from "@/components/animations/types";
 
 @Component
 export default class Accounts extends Vue {
-    @State("accounts") private accountState!: IAccountState;
+    @State(STATE_ACCOUNTS) private accountState!: IAccountState;
    
     public $refs!: Refs<{
         add: HTMLInputElement;
     }>
 
-    @Action(ACTION_ADD_ACCOUNT) private addAccount!: (payload: AddAccountPayload) => void;
-    @Action(ACTION_REMOVE_ACCOUNT) private removeAccount!: (payload: RemoveAccountPayload) => void;
+    @Action(ACTION_ADD_ACCOUNT) private addAccount!: ActionFn<AddAccountPayload>;
+    @Action(ACTION_REMOVE_ACCOUNT) private removeAccount!: ActionFn<RemoveAccountPayload>;
 
     private name = "";
 

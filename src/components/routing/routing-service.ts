@@ -3,8 +3,9 @@ import Router from "vue-router";
 import { RouteEntry } from "@/components/routing/route-entry";
 import { Routes } from "../animations/types";
 import { Subject } from "rxjs";
-
 import Home from "@/views/Home.vue";
+import { Store } from "vuex";
+import { IStoreState  } from "@/store";
 
 Vue.use(Router);
 
@@ -34,8 +35,17 @@ const accounts = new RouteEntry({
 
 export class RoutingService {
     private readonly _navigate = new Subject<Routes>();
-    private readonly _navigate$ = this._navigate.asObservable();  
+    private readonly _navigate$ = this._navigate.asObservable(); 
+    private readonly _navigateBack = new Subject<Routes>();
+    private readonly _navigateBack$ = this._navigateBack.asObservable();
+    private readonly _routeChanged = new Subject<void>();
+    private readonly _routeChanged$ = this._routeChanged.asObservable();
 
+    public get routeChanged$(){
+        return this._routeChanged$;
+    }
+
+    
     private readonly _routes = new Map<Routes, RouteEntry>([
         [Routes.About, about],
         [Routes.Home, home ],       
@@ -49,12 +59,20 @@ export class RoutingService {
         routes: this._values.map((x) => x.config)
     });
 
+    public get navigateBack$(){
+        return this._navigateBack$;
+    }
+
+    constructor(private readonly _store: Store<IStoreState>){
+
+    }
+
     public back = () =>{
-        const parent = this.current.parent;
-        if(parent === null){
-            return;
-        }
-        this.navigateTo(parent.route);
+       if(this._store.state.routes.history.length === 0) return;
+
+       const to = this._store.state.routes.history[0];
+       this._navigateBack.next(to);
+       this._routeChanged.next();
     }
 
     public get current() {
@@ -101,6 +119,7 @@ export class RoutingService {
 
     public complete(){
         this._navigate.complete();
+        this._routeChanged.next();
     }
 
     public navigateTo = (to: Routes) => {

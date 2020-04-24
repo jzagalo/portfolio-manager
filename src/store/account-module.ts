@@ -5,20 +5,20 @@ import { ACTION_ADD_ACCOUNT, ACTION_REMOVE_ACCOUNT,
 import { IStoreState } from "./store-types";
 import { AccountModel } from "./account-model";
 
-import { AddAccountPayload, RemoveAccountPayload } from "./account-types";
+import { AddAccountPayload, RemoveAccountPayload, StoreActionTree, 
+        StoreContext, StoreMutationTree } from "@/store";
 
-type AccountContext = ActionContext<IStoreState, IStoreState>;
 
-export const actions: ActionTree<IStoreState,IStoreState> = {
-    [ACTION_ADD_ACCOUNT](this: Store<IStoreState>, { commit}: AccountContext, name: AddAccountPayload){
+export const actions: StoreActionTree = {
+    [ACTION_ADD_ACCOUNT](this: Store<IStoreState>, { commit}: StoreContext, name: AddAccountPayload){
         commit(MUTATION_ADD_ACCOUNT, name);
     },
-    [ACTION_REMOVE_ACCOUNT](this: Store<IStoreState>, {commit}: AccountContext, id: RemoveAccountPayload){
+    [ACTION_REMOVE_ACCOUNT](this: Store<IStoreState>, {commit}: StoreContext, id: RemoveAccountPayload){
         commit(MUTATION_REMOVE_ACCOUNT, id);
     }
 } 
 
-export const mutations: MutationTree<IStoreState> = {
+export const mutations: StoreMutationTree = {
     [MUTATION_ADD_ACCOUNT](state: IStoreState, payload: AddAccountPayload){
         const account = new AccountModel({ id: state.accounts.index, name: payload });
         state.accounts.items = [...state.accounts.items, account].sort((a,b) =>{

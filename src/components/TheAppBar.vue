@@ -17,6 +17,7 @@ import { Vue, Component, Inject } from 'vue-property-decorator';
 import { RoutingService, Routes } from './routing';
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 import TheAppBarSettings from "@/components/app-bar/TheAppBarSettings.vue";
+import { IRouteState, STATE_ROUTES, State } from "@/store";
 
 @Component({
     components: {
@@ -25,6 +26,7 @@ import TheAppBarSettings from "@/components/app-bar/TheAppBarSettings.vue";
 })
 export default class TheAppBar extends Vue {
     @Inject() private readonly routingService!: RoutingService;
+    @State(STATE_ROUTES) private readonly routeState!: IRouteState;
 
     private showBack = true;
 
@@ -33,15 +35,13 @@ export default class TheAppBar extends Vue {
     }
 
     private async created(){
-        console.log(await this.routingService.currentAsync);     
-
         this.routingService
-            .navigate$
-            .subscribe(this.routeChange);         
-    }
+            .routeChanged$
+            .subscribe(this.routeChanged);         
+    }   
 
-    private routeChange(route: Routes){
-        this.showBack = route !== Routes.Home;
+    private routeChanged(){
+        this.showBack = this.routeState.history.length !== 0;
     }
 }
 </script>

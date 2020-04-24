@@ -11,6 +11,8 @@ import { Routes, RoutingService, RouteEntry } from "@/components/routing";
 import { AnimationTypes, AnimateOptions, AnimationSubjectOptions} from "@/components/animations/types";
 import AnimatableItem from "@/components/animations/AnimatableItem.vue";
 import { AnimationSubject } from "@/components/animations";
+import { ACTION_PUSH_ROUTE, Action, ActionFn, PushRoutePayload, 
+        ACTION_POP_ROUTE, PopRoutePayload } from "@/store";
 
 @Component({
     components: {
@@ -19,6 +21,8 @@ import { AnimationSubject } from "@/components/animations";
 })
 export default class TheRouterOutlet extends Vue{
     @Inject() private readonly routingService!: RoutingService;
+    @Action(ACTION_PUSH_ROUTE) private readonly pushRoute!: ActionFn<PushRoutePayload>;
+    @Action(ACTION_POP_ROUTE) private readonly popRoute!:  ActionFn<PopRoutePayload>;
     private readonly animationSubject = new AnimationSubject();
     private inAnimation = AnimationTypes.None;
     private isAnimatingIn = false;
@@ -39,22 +43,20 @@ export default class TheRouterOutlet extends Vue{
     private isAnimatingOut = false;
     private toEntry!: RouteEntry;
 
-    private animate(route: Routes){
+    private animate(route: Routes, type: AnimationTypes){
         this.isAnimatingOut = true;
         this.toEntry = this.routingService.find(route);
-        this.animationSubject.next(AnimationTypes.TranslateOutToLeft);
-        const from = this.routingService.current;
-        
-        if (from.isChildOf(this.toEntry)) {            
-            this.inAnimation = AnimationTypes.TranslateInFromLeft;
-            this.animationSubject.next(AnimationTypes.TranslateOutToRight, this.animationsOptionsOut);
-        } else if (this.toEntry.isChildOf(from)) {            
-            this.inAnimation = AnimationTypes.TranslateInFromRight;
-            this.animationSubject.next(AnimationTypes.TranslateOutToLeft, this.animationsOptionsOut);
-        } else {            
-            this.inAnimation = AnimationTypes.FadeIn;
-            this.animationSubject.next(AnimationTypes.FadeOut, this.animationsOptionsOut);
-        }
+        this.animationSubject.next(type, this.animationsOptionsOut);
+    }
+
+    private animateBack(route: Routes){
+        this.inAnimation = AnimationTypes.TranslateInFromLeft;
+        this.animate(route, AnimationTypes.TranslateOutToRight);
+    }
+
+    private animateForward(route: Routes){
+        this.inAnimation = AnimationTypes.TranslateInFromRight;
+        this.animate(route, AnimationTypes.TranslateOutToLeft);
     }
 
     private animationComplete(){
@@ -93,8 +95,22 @@ export default class TheRouterOutlet extends Vue{
     private created(){
         this.routingService
             .navigate$
-            .subscribe(this.animate);
+            .subscribe(this.navigateForward);
+
+        this.routingService
+            .navigateBack$
+            .subscribe(this.navigateBack);
     }  
+
+    private navigateBack(route: Routes){
+        this.animateBack(route);
+        this.popRoute();
+    }
+
+    private navigateForward(route: Routes){
+        this.pushRoute(this.routingService.current.route);
+        this.animateForward(route);
+    }
 
 }
 </script>

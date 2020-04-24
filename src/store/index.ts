@@ -3,3 +3,4 @@ export * from "./account-types";
 export * from "./store-types";
 export * from "./decorators";
 export * from "./store-constants";
+export * from "./route-types";
