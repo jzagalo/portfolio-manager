@@ -3,6 +3,7 @@ div.app-bar
     div.container
         button.angle-left(
             v-if="showBack"
+            v-on:click.prevent="back"
         )
             FontAwesomeIcon(
                 icon="angle-left"
@@ -41,6 +42,7 @@ export default class TheAppBar extends Vue {
     }   
 
     private routeChanged(){
+        console.log("route changed");
         this.showBack = this.routeState.history.length !== 0;
     }
 }

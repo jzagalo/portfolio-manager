@@ -19,14 +19,11 @@ function createDecoratorFactory(optionsKey: "computed" | "methods", mapFn: mapFn
                 return;
             }
             componentOptions[optionsKey]![key] = mapFn(mapObject)[key];
-            
-
         });
     };
 }
 
 export const Action = createDecoratorFactory("methods", mapActions);
-console.log(Action("add_"));
 export const State = createDecoratorFactory("computed", mapState);
-console.log(State);
+
 

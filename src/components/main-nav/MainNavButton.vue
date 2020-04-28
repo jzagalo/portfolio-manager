@@ -1,5 +1,5 @@
 <template lang="pug">
-    button.button-icon(v-on:click.prevent="click")
+    button.button-icon(v-on:click.prevent="click"  v-bind:class="{ 'active': isActive }")
         FontAwesomeIcon(v-bind:icon="icon")
         label {{ label }}
 </template>

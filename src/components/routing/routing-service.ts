@@ -5,7 +5,8 @@ import { Routes } from "../animations/types";
 import { Subject } from "rxjs";
 import Home from "@/views/Home.vue";
 import { Store } from "vuex";
-import { IStoreState  } from "@/store";
+import { IStoreState, STATE_ROUTES } from "@/store";
+
 
 Vue.use(Router);
 
@@ -44,7 +45,6 @@ export class RoutingService {
     public get routeChanged$(){
         return this._routeChanged$;
     }
-
     
     private readonly _routes = new Map<Routes, RouteEntry>([
         [Routes.About, about],
@@ -68,9 +68,9 @@ export class RoutingService {
     }
 
     public back = () =>{
-       if(this._store.state.routes.history.length === 0) return;
+       if(this._store.state[STATE_ROUTES].history.length === 0) return;
 
-       const to = this._store.state.routes.history[0];
+       const to = this._store.state[STATE_ROUTES].history[0];
        this._navigateBack.next(to);
        this._routeChanged.next();
     }

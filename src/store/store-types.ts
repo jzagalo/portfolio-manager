@@ -1,10 +1,12 @@
 import { IAccountState } from "@/store/account-types";
 import { ActionContext, ActionTree, MutationTree } from "vuex";
 import { IRouteState } from "./route-types";
+import { STATE_ACCOUNTS, STATE_ROUTES, } from "@/store/store-constants";
+import { ISecurityState } from "@/store/security-types";
 
-export interface IStoreState {
-    accounts: IAccountState;
-    routes: IRouteState;
+export interface IStoreState extends ISecurityState {
+    [STATE_ACCOUNTS]: IAccountState;
+    [STATE_ROUTES]: IRouteState;
 }
 
 export type ActionFn<T> = (payload: T) => void;

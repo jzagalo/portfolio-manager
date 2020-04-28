@@ -1,18 +1,17 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
-import { initialState as accountState } from "@/store/account-initial-state";
+//import { initialState as accountState } from "@/store/account-initial-state";
 import { IStoreState } from "@/store/store-types";
-import { actions as accountActions, 
-          mutations as accountMutations } from "@/store/account-module";
-import { initialState as routeState } from "./route-initial-state";
-import { actions as routeActions, mutations as routeMutations } from "./route-module";
-
+import { accountActions, accountState,accountMutations } from "@/store/account-module";
+import { routeActions,routeState, routeMutations } from "./route-module";
+import { securitiesState } from "@/store/security-module";
 
 Vue.use(Vuex)
 
 const state: IStoreState = {
-  accounts: accountState,
-  routes: routeState,
+   ...accountState,
+  ...routeState,
+  ...securitiesState
 };
 
 const actions = {
