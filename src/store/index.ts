@@ -10,3 +10,5 @@ export * from "./security-model";
 export * from "./security-segment-model";
 export * from "./security-territory-model";
 export * from "./security-type-model";
+export * from "./security-descriptor";
+export * from "./security-types";

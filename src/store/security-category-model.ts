@@ -19,16 +19,16 @@ export class SecurityCategoryModel {
     private _typeId: number;
 
     
-    public get id() {  return this._id;  }
+    public get id() { return this._id;  }
     public get segment(){ return this._segment; }
     public get segmentId(){ return this._segmentId }
     public get territory(){ return this._territory }
     public get territoryId(){ return this._territoryId }
     public get text() {
         const text = { text : "undefined"};
-        const territory = this.territory || text.text;
-        const type = this.type || text.text;
-        const segment = this.segment || text.text;
+        const territory = (this.territory || text).text;
+        const type = (this.type || text).text;
+        const segment = (this.segment || text).text;
         return `${territory} ${type} ${segment}`; 
     }
 
@@ -64,6 +64,17 @@ export class SecurityCategoryModel {
             territoryId: this._territoryId,
             typeId: this._typeId,
         };
+    }
+
+    public get abbreviation(){
+        const text = {text: "undefined undefined"};
+        const territory = (this.territory || text).text.charAt(0);
+        const type = (this.type || text).text.charAt(0);
+        const segment = (this.segment || text).text
+            .split(" ")
+            .reduce((prev,cur) => `${prev}${cur.charAt(0)}`, "");
+
+            return `${territory}${type}${segment}`;
     }
 
 }
