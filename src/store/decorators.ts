@@ -1,5 +1,5 @@
 import { createDecorator } from "vue-class-component";
-import { mapState, Computed, ActionMethod, mapActions } from "vuex";
+import { mapState, Computed, ActionMethod, mapActions, mapGetters } from "vuex";
 import { Dictionary } from "lodash";
 
 type mapActionFnType = (map: Dictionary<string>) => Dictionary<ActionMethod>;
@@ -25,5 +25,6 @@ function createDecoratorFactory(optionsKey: "computed" | "methods", mapFn: mapFn
 
 export const Action = createDecoratorFactory("methods", mapActions);
 export const State = createDecoratorFactory("computed", mapState);
+export const Getter = createDecoratorFactory("computed", mapGetters);
 
 

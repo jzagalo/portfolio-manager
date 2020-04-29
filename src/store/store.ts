@@ -1,10 +1,9 @@
-import Vue from 'vue'
-import Vuex from 'vuex'
-//import { initialState as accountState } from "@/store/account-initial-state";
+import Vue from 'vue';
+import Vuex from 'vuex';
 import { IStoreState } from "@/store/store-types";
 import { accountActions, accountState,accountMutations } from "@/store/account-module";
 import { routeActions,routeState, routeMutations } from "./route-module";
-import { securitiesState } from "@/store/security-module";
+import { securitiesState, securitiesGetters } from "@/store/security-module";
 
 Vue.use(Vuex)
 
@@ -12,6 +11,10 @@ const state: IStoreState = {
    ...accountState,
   ...routeState,
   ...securitiesState
+};
+
+const getters = {
+  ...securitiesGetters,
 };
 
 const actions = {
@@ -27,5 +30,6 @@ const mutations = {
 export default new Vuex.Store({
   state,
   mutations,
-  actions,  
+  actions, 
+  getters 
 });

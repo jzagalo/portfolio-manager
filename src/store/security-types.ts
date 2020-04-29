@@ -1,6 +1,9 @@
+
 import { STATE_SECURITY_MARKETS, STATE_SECURITY_SEGMENTS,
         STATE_SECURITY_TERRITORIES, STATE_SECURITY_TYPES,  
-        STATE_SECURITY_CATEGORIES, STATE_SECURITIES,           
+        STATE_SECURITY_CATEGORIES, STATE_SECURITIES,   
+        GETTER_SECURITIES, GETTER_SECURITY, GETTER_SECURITY_CATEGORIES,
+        GETTER_SECURITY_CATEGORY,        
         } from "@/store/store-constants";
 import { SecurityMarketModel} from "@/store/security-market-model";
 import { SecuritySegmentModel } from "@/store/security-segment-model";
@@ -50,4 +53,12 @@ export interface ISecurityState {
     [STATE_SECURITY_TYPES]: ISecurityTypeModelState;
     [STATE_SECURITY_CATEGORIES]: ISecurityCategoryModelState;
     [STATE_SECURITIES]: ISecurityModelState;
+}
+
+export interface ISecurityGetters{
+    [GETTER_SECURITIES]: SecurityModel[];
+    [GETTER_SECURITY]: (id: number) => SecurityModel;
+    [GETTER_SECURITY_CATEGORIES]: SecurityCategoryModel[];
+    [GETTER_SECURITY_CATEGORY]: (id: number) => SecurityCategoryModel;
+
 }
