@@ -1,31 +1,42 @@
 <template lang="pug">
-    div
-        ListView(
-            v-bind:items="securities"
-            v-bind:onClick="onClickSecurity"
-            v-bind:renderFn="renderFnSecurity"
-        )/
-        ListView(
-            v-bind:items="categories"
-            v-bind:onClickSecurity="onClickCategory"
-            v-bind:renderFn="renderFnCategory"
-        )/
-        ListView(
-        v-bind:items="markets"
-        v-bind:onClick="onClickDescriptorFactory(descriptorMarkets)"
-        v-bind:renderFn="renderFnDescriptor")/
-        ListView(
-        v-bind:items="segments"
-        v-bind:onClick="onClickDescriptorFactory(descriptorSegments)"
-        v-bind:renderFn="renderFnDescriptor")/
-        ListView(
-            v-bind:items="territories"
-            v-bind:onClick="onClickDescriptorFactory(descriptorTerritories)"
-            v-bind:renderFn="renderFnDescriptor")/
-        ListView(
-            v-bind:items="types"
-            v-bind:onClick="onClickDescriptorFactory(descriptorTypes)"
-            v-bind:renderFn="renderFnDescriptor")/
+   
+    TabContainer(v-bind:tabs="tabs") 
+        TabEntry       
+            ListView(
+                v-bind:items="securities"
+                v-bind:onClick="onClickSecurity"
+                v-bind:renderFn="renderFnSecurity"
+            )/ 
+        TabEntry      
+            ListView(
+                v-bind:items="categories"
+                v-bind:onClickSecurity="onClickCategory"
+                v-bind:renderFn="renderFnCategory"
+            )/ 
+        TabEntry           
+            ListView(
+                v-bind:items="markets"
+                v-bind:onClick="onClickDescriptorFactory(descriptorMarkets)"
+                v-bind:renderFn="renderFnDescriptor"
+            )/   
+        TabEntry  
+            ListView(
+            v-bind:items="segments"
+            v-bind:onClick="onClickDescriptorFactory(descriptorSegments)"
+            v-bind:renderFn="renderFnDescriptor"
+            )/  
+        TabEntry       
+            ListView(
+                v-bind:items="territories"
+                v-bind:onClick="onClickDescriptorFactory(descriptorTerritories)"
+                v-bind:renderFn="renderFnDescriptor"
+            )/  
+        TabEntry       
+            ListView(
+                v-bind:items="types"
+                v-bind:onClick="onClickDescriptorFactory(descriptorTypes)"
+                v-bind:renderFn="renderFnDescriptor"
+            )/
 </template>
 <script lang="tsx">
 
@@ -42,6 +53,9 @@ import { GETTER_SECURITIES, GETTER_SECURITY_CATEGORIES,
         STATE_SECURITY_TYPES,
          } from "@/store";
 import ListView from "@/components/ListView.vue";
+import TabContainer from "@/components/tabs/TabContainer.vue";
+import TabEntry from "@/components/tabs/TabEntry.vue";
+import TabHeader from "@/components/tabs/TabHeader.vue";
 
 enum Descriptors {
     Markets,
@@ -53,6 +67,9 @@ enum Descriptors {
 @Component({
     components: {
         ListView,
+        TabContainer,
+        TabEntry,
+        TabHeader
     }
 })
 export default class Securities extends Vue {
@@ -68,9 +85,20 @@ export default class Securities extends Vue {
     private readonly descriptorTerritories = Descriptors.Territories;
     private readonly descriptorTypes = Descriptors.Types;
 
+    private readonly tabs = [
+        "Securities",
+        "Categories",
+        "Markets",
+        "Segments",
+        "Territories",
+        "Types",
+    ];
+    
+
     private get segments() { return this.segmentState.items; }
     private get territories() { return this.territoryState.items; }
     private get types() { return this.typeState.items; }
+
 
     private get markets(){ return this.marketState.items; }
 
@@ -84,6 +112,7 @@ export default class Securities extends Vue {
     }
 
     private renderFnDescriptor(descriptor: SecurityDescriptor){
+        console.log(descriptor.text);
         return(
             <div>
                 <label>{ descriptor.text }</label>
@@ -105,6 +134,7 @@ export default class Securities extends Vue {
     }
 
     private renderFnCategory(category: SecurityCategoryModel){
+        console.log(category);
         return (
             <div>
                 <label>{category.text} </label>
@@ -138,5 +168,8 @@ export default class Securities extends Vue {
         
         .list-item-text
             flex: 1
+    
+    /deep/ .tab-headings li a
+        min-width: 6.3125rem
 
 </style>

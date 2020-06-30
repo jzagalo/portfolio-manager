@@ -70,7 +70,8 @@ export default class AnimatableItem extends Vue {
 
     private animate(options: AnimateOptions): void{       
         this.options = options;
-        const animation = this.animationMap.get(this.options.type);       
+        const animation = this.animationMap.get(this.options.type);   
+        console.log(this.getCssClass(`${animation}Before`));    
 
         this.afterCssClass = "";
         this.updateWithPreAndPost(
@@ -103,6 +104,7 @@ export default class AnimatableItem extends Vue {
 
     private animationEnd(){
         const animation = this.animationMap.get(this.options.type);
+        console.log(animation + '--,');
 
         this.updateWithPreAndPost(
             AnimationStages.AfterApplyPre,
@@ -126,7 +128,8 @@ export default class AnimatableItem extends Vue {
         this.options.type = AnimationTypes.None;
     }
 
-    private getCssClass(index: string){     
+    private getCssClass(index: string){    
+        console.log(index + ''); 
         const css = animationClasses[index];        
         if (typeof(css) === "undefined") {
             // tslint:disable-next-line:no-console

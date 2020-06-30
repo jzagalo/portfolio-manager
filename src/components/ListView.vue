@@ -9,10 +9,7 @@ export default class ListView extends Vue {
     @Prop() private readonly onClick!: (item: any) => void;
     @Prop() private readonly renderFn!: (item: any) => JSX.Element;
 
-    constructor(){
-        super();
-        this.idFn = this.idFn.bind(this);
-    }
+    
 
     private idFn = (item: any) => {
         return typeof(this.keyFn) !== "undefined" ?
@@ -25,14 +22,16 @@ export default class ListView extends Vue {
             return;
         }
 
-        const content = this.items.map((x, index) => {                    
-                       return( <li >
-                            <a class="list-item-content" href="#void" onClick={() => this.onClick(x)}>
-                                <div class="list-item-text">{this.renderFn(x)}</div>
-                                <span></span>    
-                            </a>                       
-                           </li>);         
-                    });
+        const content = this.items.map((x, index) => {  
+
+        return( <li key="{this.idFn}" >
+                    <a class="list-item-content" href="#void" onClick={() => this.onClick(x)}>
+                        <div class="list-item-text">{this.renderFn(x)}</div>
+                        <span>&rang;</span>    
+                    </a>                       
+                </li>);         
+        });
+        
         return(
             <ul>
                 { content }
@@ -41,3 +40,15 @@ export default class ListView extends Vue {
     }
 }
 </script>
+
+<style lang="sass" scoped>
+.list-item-content
+    display: flex
+    align-items: center
+    padding: 0.75rem 0.5rem
+    border-bottom: 1px solid #eee
+    text-decoration: none
+
+    .list-item-text
+        flex: 1
+</style>
