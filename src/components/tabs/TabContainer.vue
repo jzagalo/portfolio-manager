@@ -10,7 +10,7 @@ div.tab-container
 import { Vue, Component, Prop } from 'vue-property-decorator';
 import TabEntry from './TabEntry.vue';
 import TabHeader from './TabHeader.vue';
-import {  AnimationSubjectOptions, AnimationTypes }
+import { AnimationSubjectOptions, AnimationTypes }
 from "@/components/animations/types";
 import { AnimationSubject} from "@/components/animations/animation-subject";
 import AnimatableItem from "@/components/animations/AnimatableItem.vue";
@@ -53,11 +53,9 @@ export default class TabContainer extends Vue{
             return;
         }        
 
-        console.log(this);
-
         this.$slots.default.forEach((x, i) => {
             const entry = new TabEntry();
-            entry.visible = i === this.activeIndex;
+            entry.visible = (i === this.activeIndex);
             entry.$slots.default = [ x ];
             entry.$mount();
 

@@ -7,9 +7,7 @@ export default class ListView extends Vue {
     @Prop() private readonly items!: any[];
     @Prop() private readonly keyFn!: (item: any) => number; 
     @Prop() private readonly onClick!: (item: any) => void;
-    @Prop() private readonly renderFn!: (item: any) => JSX.Element;
-
-    
+    @Prop() private readonly renderFn!: (item: any) => JSX.Element;    
 
     private idFn = (item: any) => {
         return typeof(this.keyFn) !== "undefined" ?
