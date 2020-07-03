@@ -3,8 +3,14 @@ import {
     STATE_SECURITY_MARKETS, STATE_SECURITY_SEGMENTS,
     STATE_SECURITY_TERRITORIES, STATE_SECURITY_TYPES,
     GETTER_SECURITIES, GETTER_SECURITY, GETTER_SECURITY_CATEGORIES,
-    GETTER_SECURITY_CATEGORY,
+    GETTER_SECURITY_CATEGORY, GETTER_SECURITY_MARKET,
+    GETTER_SECURITY_MARKETS, GETTER_SECURITY_SEGMENT,
+    GETTER_SECURITY_SEGMENTS, GETTER_SECURITY_TERRITORIES,
+    GETTER_SECURITY_TERRITORY, GETTER_SECURITY_TYPE,
+    GETTER_SECURITY_TYPES,
 } from "@/store/store-constants";
+
+import { findAll , findById, } from "@/store/functions";
 import { ISecurityState, ISecurityGetters } from "@/store/security-types";
 import { IStoreState, StoreGetterTree } from "@/store/store-types";
 
@@ -21,27 +27,23 @@ export const securitiesState: ISecurityState = {
     [STATE_SECURITY_MARKETS]: marketState,
     [STATE_SECURITY_TERRITORIES]: territoryState,
     [STATE_SECURITY_TYPES]: typeState,
-    [STATE_SECURITY_SEGMENTS]:segmentState,
+    [STATE_SECURITY_SEGMENTS]: segmentState,
 }
 
-
 export const securitiesGetters: StoreGetterTree = {
-    [GETTER_SECURITIES]:(state: IStoreState, getters: ISecurityGetters) => {
+    [GETTER_SECURITIES]:(state: IStoreState, getters: ISecurityGetters) => {        
         return state[STATE_SECURITIES].items.map((x) => getters[GETTER_SECURITY](x.id));
     },
     [GETTER_SECURITY]: (state: IStoreState, getters: ISecurityGetters) => {
         return (id: number) => {
-            const security = state[STATE_SECURITIES].items.find((x) => x.id === id);
-            if(typeof(security) === "undefined"){
-                throw new Error(`Unable to find security with id: ${id}.`);                
-            }
-
-            const category = getters[GETTER_SECURITY_CATEGORY](security.categoryId);
-            const market = state[STATE_SECURITY_MARKETS].items.find((x) => x.id === security.marketId);
-            if(typeof(market) === "undefined"){
-                throw new Error(`Unable to find security with id: ${security.marketId}.`);                
-            }
-            return security
+           
+            const security = findById(state[STATE_SECURITIES], id);           
+            const category = getters[GETTER_SECURITY_CATEGORY](security!.categoryId);
+            console.log(getters);
+            console.log(state);
+            const market = getters[GETTER_SECURITY_MARKET](security!.marketId);
+           
+            return security!
                     .setCategory(category)
                     .setMarket(market);
 
@@ -75,6 +77,51 @@ export const securitiesGetters: StoreGetterTree = {
                 .setType(type);       
         };
     },
-   
 
+    [GETTER_SECURITY_MARKET]: (state: IStoreState) => {
+        return (id: number) => {
+            const market = findById(state[STATE_SECURITY_MARKETS], id);
+
+            return market;
+        }
+    },  
+
+    [GETTER_SECURITY_MARKETS]: (state: IStoreState) => {        
+        return findAll(state[STATE_SECURITY_MARKETS]);    
+    }, 
+
+    [GETTER_SECURITY_SEGMENT]:(state: IStoreState) => {
+        return (id: number) => {
+            const segment = findById(state[STATE_SECURITY_SEGMENTS], id);
+
+            return segment;
+        }
+    },
+
+    [GETTER_SECURITY_SEGMENTS]: (state: IStoreState) => {        
+        return findAll(state[STATE_SECURITY_SEGMENTS]);    
+    }, 
+
+    [GETTER_SECURITY_TERRITORIES]: (state: IStoreState) => {
+        return findAll(state[STATE_SECURITY_TERRITORIES]);
+    },
+
+    [GETTER_SECURITY_TERRITORY]: (state: IStoreState) => {
+        return (id: number) => {
+            const territory = findById(state[STATE_SECURITY_TERRITORIES],id);
+
+            return territory;
+        }
+    },
+    [GETTER_SECURITY_TYPE] : (state: IStoreState) => {
+        return (id: number) => {
+            const type = findById(state[STATE_SECURITY_TYPES], id);
+
+            return type;
+        }
+    }, 
+
+    [GETTER_SECURITY_TYPES]: (state: IStoreState) => {
+        return findAll(state[STATE_SECURITY_TYPES]);
+    },
 }

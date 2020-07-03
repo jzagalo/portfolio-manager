@@ -48,9 +48,17 @@ import { GETTER_SECURITIES, GETTER_SECURITY_CATEGORIES,
         ISecuritySegmentModelState,
         ISecurityTerritoryModelState,
         ISecurityTypeModelState,
+        SecurityMarketModel,
+        SecuritySegmentModel,
+        SecurityTerritoryModel,
+        SecurityTypeModel,
         STATE_SECURITY_SEGMENTS,
         STATE_SECURITY_TERRITORIES,
         STATE_SECURITY_TYPES,
+        GETTER_SECURITY_MARKETS,
+        GETTER_SECURITY_SEGMENTS,
+        GETTER_SECURITY_TERRITORIES,
+        GETTER_SECURITY_TYPES,
          } from "@/store";
 import ListView from "@/components/ListView.vue";
 import TabContainer from "@/components/tabs/TabContainer.vue";
@@ -72,9 +80,14 @@ enum Descriptors {
         TabHeader
     }
 })
-export default class Securities extends Vue {
+export default class Securities extends Vue {    
     @Getter(GETTER_SECURITIES) private readonly securities!: SecurityModel[];
     @Getter(GETTER_SECURITY_CATEGORIES) private readonly categories!: SecurityCategoryModel[];
+    @Getter(GETTER_SECURITY_MARKETS) private readonly marketss!: SecurityMarketModel[];
+    @Getter(GETTER_SECURITY_SEGMENTS) private readonly segmentss!: SecuritySegmentModel[];
+    @Getter(GETTER_SECURITY_TERRITORIES) private readonly territoriess!: SecurityTerritoryModel[];
+    @Getter(GETTER_SECURITY_TYPES) private readonly typess!: SecurityTypeModel[];
+
     @State(STATE_SECURITY_MARKETS) private readonly marketState!: ISecurityMarketsModelState;    
     @State(STATE_SECURITY_SEGMENTS) private readonly segmentState!: ISecuritySegmentModelState;
     @State(STATE_SECURITY_TERRITORIES) private readonly territoryState!: ISecurityTerritoryModelState;
