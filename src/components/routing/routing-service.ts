@@ -6,6 +6,7 @@ import { Subject } from "rxjs";
 import Home from "@/views/Home.vue";
 import { Store } from "vuex";
 import { IStoreState, STATE_ROUTES } from "@/store";
+import { IRoute, IRouteOptions } from "@/components/routing";
 
 
 Vue.use(Router);
@@ -42,12 +43,23 @@ const securities = new RouteEntry({
     route: Routes.Securities 
 });
 
+const securitiesDetails = new RouteEntry({
+    component: () => import(/* webpackChunkName: "about" */ "../../views/Securities.vue"),
+    name: "securities-details",
+    parent: securities,
+    path: "/securities-details",  
+    route: Routes.SecuritiesDetails 
+});
+
 export class RoutingService {
-    private readonly _navigate = new Subject<Routes>();
+    private readonly _navigate = new Subject<IRoute>();
     private readonly _navigate$ = this._navigate.asObservable(); 
-    private readonly _navigateBack = new Subject<Routes>();
+    private readonly _navigateBack = new Subject<IRoute>();
     private readonly _navigateBack$ = this._navigateBack.asObservable();
     private readonly _routeChanged = new Subject<void>();
+    public get history(){
+        return this._store.state[STATE_ROUTES].history;
+    }
     private readonly _routeChanged$ = this._routeChanged.asObservable();
 
     public get routeChanged$(){
@@ -58,7 +70,8 @@ export class RoutingService {
         [Routes.About, about],
         [Routes.Home, home ],       
         [Routes.Accounts, accounts ],
-        [Routes.Securities, securities ]
+        [Routes.Securities, securities ],
+        [Routes.SecuritiesDetails, securitiesDetails ]
     ]);  
 
     private readonly _values = Array.from(this._routes.values());
@@ -73,15 +86,30 @@ export class RoutingService {
     }
 
     constructor(private readonly _store: Store<IStoreState>){
-
+        console.log(this);
     }
 
     public back = () =>{
-       if(this._store.state[STATE_ROUTES].history.length === 0) return;
+       if(this.history.length === 0) return;
 
-       const to = this._store.state[STATE_ROUTES].history[0];
+       const to = this.history[0];
        this._navigateBack.next(to);
        this._routeChanged.next();
+    }
+
+    public createRoute = (to: Routes, options?: IRouteOptions): IRoute => {
+        return {
+            id: to,
+            name: this.find(to).name,
+            ...options,
+        }
+    }
+
+    public queryParam<Q, R extends string | number=string>(
+        func: (q: Q) => string, transform: (x: string) => R = (x) => x as R){
+            console.log(this);
+        const param = func((this._router.currentRoute.query as unknown) as Q);
+        return transform(param);
     }
 
     public get current() {
@@ -101,7 +129,6 @@ export class RoutingService {
         if(typeof(route) === "undefined"){
             throw new Error(` A route with with name: ${name} has not been defined`);
         }
-
         return route;
     }
 
@@ -131,11 +158,25 @@ export class RoutingService {
         this._routeChanged.next();
     }
 
-    public navigateTo = (to: Routes) => {
+    public navigateTo = (to: Routes, options?: IRouteOptions) => {
         if(this.current.isSameRoute(to)){
             return;
         }
+
+        if(this.history.length > 0 && this.history[0].id === to){
+            this.back();
+            return;
+        }
         
-        this._navigate.next(to)
+        this._navigate.next(this.createRoute(to, options));
+        this._routeChanged.next();
+    }
+
+    public queryString = (route: IRoute) => {
+        return typeof(route.query) !== "undefined" ?
+        `?${Object.keys(route.query)
+            .map((x) => `${x}=${route.query![x]}`)
+            .join("&")       
+        }`: "";
     }
 }

@@ -3,7 +3,10 @@ import { STATE_SECURITY_MARKETS, STATE_SECURITY_SEGMENTS,
         STATE_SECURITY_TERRITORIES, STATE_SECURITY_TYPES,  
         STATE_SECURITY_CATEGORIES, STATE_SECURITIES,   
         GETTER_SECURITIES, GETTER_SECURITY, GETTER_SECURITY_CATEGORIES,
-        GETTER_SECURITY_CATEGORY,        
+        GETTER_SECURITY_CATEGORY,GETTER_SECURITY_MARKET,
+        GETTER_SECURITY_MARKETS,   GETTER_SECURITY_SEGMENT,
+        GETTER_SECURITY_SEGMENTS, GETTER_SECURITY_TERRITORIES,
+        GETTER_SECURITY_TERRITORY, GETTER_SECURITY_TYPE, GETTER_SECURITY_TYPES,      
         } from "@/store/store-constants";
 import { SecurityMarketModel} from "@/store/security-market-model";
 import { SecuritySegmentModel } from "@/store/security-segment-model";
@@ -57,8 +60,27 @@ export interface ISecurityState {
 
 export interface ISecurityGetters{
     [GETTER_SECURITIES]: SecurityModel[];
-    [GETTER_SECURITY]: (id: number) => SecurityModel;
+    [GETTER_SECURITY]: GetterSecurity;
     [GETTER_SECURITY_CATEGORIES]: SecurityCategoryModel[];
-    [GETTER_SECURITY_CATEGORY]: (id: number) => SecurityCategoryModel;
+    [GETTER_SECURITY_CATEGORY]: GetterCategory;
+    [GETTER_SECURITY_MARKET]: GetterMarket;
+    [GETTER_SECURITY_MARKETS]: SecurityMarketModel[];
+    [GETTER_SECURITY_SEGMENT]: GetterSegment;
+    [GETTER_SECURITY_SEGMENTS]: SecuritySegmentModel[];
+    [GETTER_SECURITY_TERRITORIES]: SecurityTerritoryModel[];
+    [GETTER_SECURITY_TERRITORY]: GetterTerritory;
+    [GETTER_SECURITY_TYPE]: GetterType;
+    [GETTER_SECURITY_TYPES]: SecurityTypeModel[];
 
 }
+
+export type GetterCategory = (id: number) => SecurityCategoryModel;
+export type GetterMarket = (id: number) => SecurityMarketModel;
+export type GetterSecurity = (id: number) => SecurityModel;
+export type GetterSegment = (id: number) => SecuritySegmentModel;
+export type GetterTerritory = (id: number) => SecurityTerritoryModel;
+export type GetterType = (id: number) => SecurityTypeModel;
+
+
+
+

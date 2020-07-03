@@ -29,10 +29,12 @@ export default class TheAppBar extends Vue {
     @Inject() private readonly routingService!: RoutingService;
     @State(STATE_ROUTES) private readonly routeState!: IRouteState;
 
-    private showBack = true;
-
-    private back(){
+    private back() {
         this.routingService.back();
+    }
+
+    private get showBack(){
+        return this.routeState.history.length !== 0;
     }
 
     private async created(){
@@ -42,8 +44,7 @@ export default class TheAppBar extends Vue {
     }   
 
     private routeChanged(){
-        console.log("route changed");
-        this.showBack = this.routeState.history.length !== 0;
+        console.log("route changed");       
     }
 }
 </script>

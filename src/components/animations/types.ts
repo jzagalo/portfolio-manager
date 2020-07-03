@@ -39,6 +39,7 @@ export enum Routes {
     Home,
     Accounts,
     Securities,
+    SecuritiesDetails,
 }
 
 export type Refs<T extends object> = Vue["$refs"] & T;

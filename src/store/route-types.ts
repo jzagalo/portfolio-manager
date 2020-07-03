@@ -1,8 +1,8 @@
-import { Routes } from "@/components/routing";
+import { IRoute } from "@/components/routing";
 
 export interface IRouteState {
-    history: Routes[];
+    history: IRoute[];
 }
 
-export type PushRoutePayload = Routes;
+export type PushRoutePayload = IRoute;
 export type PopRoutePayload = void;

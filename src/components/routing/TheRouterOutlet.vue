@@ -7,7 +7,7 @@ div.router-view(v-bind:class="{ 'is-animating': isAnimating }")
 
 <script lang="ts">
 import {Vue, Component, Inject } from 'vue-property-decorator';
-import { Routes, RoutingService, RouteEntry } from "@/components/routing";
+import { Routes, RoutingService, RouteEntry, IRoute } from "@/components/routing";
 import { AnimationTypes, AnimateOptions, AnimationSubjectOptions} from "@/components/animations/types";
 import AnimatableItem from "@/components/animations/AnimatableItem.vue";
 import { AnimationSubject } from "@/components/animations";
@@ -28,6 +28,8 @@ export default class TheRouterOutlet extends Vue{
     private isAnimatingIn = false;
     private options: AnimateOptions = {type: AnimationTypes.None};
 
+    private toRoute!: IRoute;
+
     private get isAnimating(){
         return this.isAnimatingIn || this.isAnimatingOut;
     }
@@ -43,18 +45,19 @@ export default class TheRouterOutlet extends Vue{
     private isAnimatingOut = false;
     private toEntry!: RouteEntry;
 
-    private animate(route: Routes, type: AnimationTypes){
+    private animate(route: IRoute, type: AnimationTypes){
         this.isAnimatingOut = true;
-        this.toEntry = this.routingService.find(route);
+        this.toEntry = this.routingService.find(route.id);
+        this.toRoute = route;
         this.animationSubject.next(type, this.animationsOptionsOut);
     }
 
-    private animateBack(route: Routes){
+    private animateBack(route: IRoute){
         this.inAnimation = AnimationTypes.TranslateInFromLeft;
         this.animate(route, AnimationTypes.TranslateOutToRight);
     }
 
-    private animateForward(route: Routes){
+    private animateForward(route: IRoute){
         this.inAnimation = AnimationTypes.TranslateInFromRight;
         this.animate(route, AnimationTypes.TranslateOutToLeft);
     }
@@ -70,7 +73,7 @@ export default class TheRouterOutlet extends Vue{
             return;
         }
        this.isAnimatingOut = false;
-       this.$router.push(this.toEntry.path);    
+       this.$router.push(`${this.toEntry.path}${this.routingService.queryString(this.toRoute)}`);    
        this.animationSubject.next(this.inAnimation);
        this.inAnimation = AnimationTypes.None; 
     }
@@ -102,13 +105,18 @@ export default class TheRouterOutlet extends Vue{
             .subscribe(this.navigateBack);
     }  
 
-    private navigateBack(route: Routes){
+    private navigateBack(route: IRoute){
         this.animateBack(route);
         this.popRoute();
     }
 
-    private navigateForward(route: Routes){
-        this.pushRoute(this.routingService.current.route);
+    private navigateForward(route: IRoute){
+        const current = this.routingService.current;
+        this.pushRoute({
+             id: current.route,
+             name: current.name,
+             query: this.$route.query,
+        });
         this.animateForward(route);
     }
 

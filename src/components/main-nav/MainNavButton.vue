@@ -6,7 +6,7 @@
 
 <script lang="ts">
 import { Vue, Component, Inject, Prop } from 'vue-property-decorator';
-import { Routes, RoutingService } from "@/components/routing";
+import { Routes, RoutingService, IRoute } from "@/components/routing";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 
 @Component
@@ -29,8 +29,8 @@ export default class MainNavButton extends Vue {
         this.routingService.navigateTo(this.route);
     }
 
-    private setActive(route: Routes){
-        this.isActive = this.route === route;
+    private setActive(route: IRoute){
+        this.isActive = this.route === route.id;
     }
     
 }
