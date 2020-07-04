@@ -10,7 +10,9 @@ import {
     GETTER_SECURITY_TYPES,
 } from "@/store/store-constants";
 
-import { findAll , findById, } from "@/store/functions";
+
+import { StoreActions, StoreActionValidator } from "@/store/store-action-validators";
+import { findAll , findById, undefinedMessage } from "@/store/functions";
 import { ISecurityState, ISecurityGetters } from "@/store/security-types";
 import { IStoreState, StoreGetterTree } from "@/store/store-types";
 
@@ -21,6 +23,7 @@ import { initialState as segmentState } from "@/store/security-segment-initial-s
 import { initialState as territoryState } from "@/store/security-territory-initial-state";
 import { initialState as typeState } from "@/store/security-type-initial-state";
 
+const storeActionValidator = new StoreActionValidator();
 export const securitiesState: ISecurityState = {
     [STATE_SECURITIES]: securityState,
     [STATE_SECURITY_CATEGORIES]: categoryState,
@@ -37,10 +40,14 @@ export const securitiesGetters: StoreGetterTree = {
     [GETTER_SECURITY]: (state: IStoreState, getters: ISecurityGetters) => {
         return (id: number) => {
            
-            const security = findById(state[STATE_SECURITIES], id);           
-            const category = getters[GETTER_SECURITY_CATEGORY](security!.categoryId);
-            console.log(getters);
-            console.log(state);
+            const security = findById(state[STATE_SECURITIES], id);
+            storeActionValidator
+                .begin()
+                .while(StoreActions.Getting)
+                .throwIf(security)
+                .isUndefined("security", id, state[STATE_SECURITIES].index);
+
+            const category = getters[GETTER_SECURITY_CATEGORY](security!.categoryId);            
             const market = getters[GETTER_SECURITY_MARKET](security!.marketId);
            
             return security!
@@ -94,6 +101,12 @@ export const securitiesGetters: StoreGetterTree = {
         return (id: number) => {
             const segment = findById(state[STATE_SECURITY_SEGMENTS], id);
 
+            storeActionValidator
+                .begin()
+                .while(StoreActions.Getting)
+                .throw(segment)
+                .isUndefined(undefinedMessage("segment", id, state[STATE_SECURITY_SEGMENTS].index));
+
             return segment;
         }
     },
@@ -110,12 +123,24 @@ export const securitiesGetters: StoreGetterTree = {
         return (id: number) => {
             const territory = findById(state[STATE_SECURITY_TERRITORIES],id);
 
+            storeActionValidator
+                .begin()
+                .while(StoreActions.Getting)
+                .throw(territory)
+                .isUndefined(undefinedMessage("territory", id, state[STATE_SECURITY_TERRITORIES].index));
+
             return territory;
         }
     },
     [GETTER_SECURITY_TYPE] : (state: IStoreState) => {
         return (id: number) => {
             const type = findById(state[STATE_SECURITY_TYPES], id);
+
+            storeActionValidator
+                .begin()
+                .while(StoreActions.Getting)
+                .throw(type)
+                .isUndefined(undefinedMessage("type", id, state[STATE_SECURITY_TYPES].index));            
 
             return type;
         }
