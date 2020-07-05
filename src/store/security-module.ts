@@ -45,7 +45,7 @@ export const securitiesGetters: StoreGetterTree = {
                 .begin()
                 .while(StoreActions.Getting)
                 .throwIf(security)
-                .isUndefined("security", id, state[STATE_SECURITIES].index);
+                .isUndefined(undefinedMessage("security", id, state[STATE_SECURITIES].index));
 
             const category = getters[GETTER_SECURITY_CATEGORY](security!.categoryId);            
             const market = getters[GETTER_SECURITY_MARKET](security!.marketId);
@@ -104,7 +104,7 @@ export const securitiesGetters: StoreGetterTree = {
             storeActionValidator
                 .begin()
                 .while(StoreActions.Getting)
-                .throw(segment)
+                .throwIf(segment)
                 .isUndefined(undefinedMessage("segment", id, state[STATE_SECURITY_SEGMENTS].index));
 
             return segment;
@@ -126,7 +126,7 @@ export const securitiesGetters: StoreGetterTree = {
             storeActionValidator
                 .begin()
                 .while(StoreActions.Getting)
-                .throw(territory)
+                .throwIf(territory)
                 .isUndefined(undefinedMessage("territory", id, state[STATE_SECURITY_TERRITORIES].index));
 
             return territory;
@@ -139,7 +139,7 @@ export const securitiesGetters: StoreGetterTree = {
             storeActionValidator
                 .begin()
                 .while(StoreActions.Getting)
-                .throw(type)
+                .throwIf(type)
                 .isUndefined(undefinedMessage("type", id, state[STATE_SECURITY_TYPES].index));            
 
             return type;

@@ -4,43 +4,49 @@
         TabEntry       
             ListView(
                 v-bind:items="securities"
-                v-bind:onClick="onClickSecurity"
+                v-bind:onClick="onClickFactory(descriptorSecurities)"
+                v-bind:onClickCreate="onClickCreateFactory(descriptorSecurities)"
                 v-bind:renderFn="renderFnSecurity"
             )/ 
         TabEntry      
             ListView(
-                v-bind:items="categories"
-                v-bind:onClickSecurity="onClickCategory"
+                v-bind:items="categories"       
+                v-bind:onClick="onClickFactory(descriptorCategories)"
+                v-bind:onClickCreate="onClickCreateFactory(descriptorCategories)"
                 v-bind:renderFn="renderFnCategory"
             )/ 
         TabEntry           
             ListView(
                 v-bind:items="markets"
-                v-bind:onClick="onClickDescriptorFactory(descriptorMarkets)"
+                v-bind:onClick="onClickFactory(descriptorMarkets)"
+                v-bind:onClickCreate="onClickCreateFactory(descriptorMarkets)"
                 v-bind:renderFn="renderFnDescriptor"
             )/   
         TabEntry  
             ListView(
             v-bind:items="segments"
-            v-bind:onClick="onClickDescriptorFactory(descriptorSegments)"
+            v-bind:onClick="onClickFactory(descriptorSegments)"
+            v-bind:onClickCreate="onClickCreateFactory(descriptorSegments)"
             v-bind:renderFn="renderFnDescriptor"
             )/  
         TabEntry       
             ListView(
                 v-bind:items="territories"
-                v-bind:onClick="onClickDescriptorFactory(descriptorTerritories)"
+                v-bind:onClick="onClickFactory(descriptorTerritories)"
+                v-bind:onClickCreate="onClickCreateFactory(descriptorTerritories)"
                 v-bind:renderFn="renderFnDescriptor"
             )/  
         TabEntry       
             ListView(
                 v-bind:items="types"
-                v-bind:onClick="onClickDescriptorFactory(descriptorTypes)"
+                v-bind:onClick="onClickFactory(descriptorTypes)"
+                v-bind:onClickCreate="onClickCreateFactory(descriptorTypes)"
                 v-bind:renderFn="renderFnDescriptor"
             )/
 </template>
 <script lang="tsx">
 
-import {Vue, Component } from 'vue-property-decorator';
+import { Vue, Component, Inject } from 'vue-property-decorator';
 import { GETTER_SECURITIES, GETTER_SECURITY_CATEGORIES,
         Getter, SecurityCategoryModel, SecurityModel,
         ISecurityMarketsModelState, SecurityDescriptor,
@@ -64,6 +70,8 @@ import ListView from "@/components/ListView.vue";
 import TabContainer from "@/components/tabs/TabContainer.vue";
 import TabEntry from "@/components/tabs/TabEntry.vue";
 import TabHeader from "@/components/tabs/TabHeader.vue";
+import { SecurityDescriptors } from "@/views/types";
+import { IRoute, Routes, RoutingService, } from "@/components/routing";
 
 enum Descriptors {
     Markets,
@@ -93,10 +101,14 @@ export default class Securities extends Vue {
     @State(STATE_SECURITY_TERRITORIES) private readonly territoryState!: ISecurityTerritoryModelState;
     @State(STATE_SECURITY_TYPES) private readonly typeState!: ISecurityTypeModelState;
 
-    private readonly descriptorMarkets = Descriptors.Markets;
-    private readonly descriptorSegments = Descriptors.Segments;
-    private readonly descriptorTerritories = Descriptors.Territories;
-    private readonly descriptorTypes = Descriptors.Types;
+    @Inject() private readonly routingService!: RoutingService;   
+
+    private readonly descriptorCategories = SecurityDescriptors.Categories;
+    private readonly descriptorMarkets = SecurityDescriptors.Markets;
+    private readonly descriptorSecurities = SecurityDescriptors.Securities;
+    private readonly descriptorSegments = SecurityDescriptors.Segments;
+    private readonly descriptorTerritories = SecurityDescriptors.Territories;
+    private readonly descriptorTypes = SecurityDescriptors.Types;
 
     private readonly tabs = [
         "Securities",
@@ -111,7 +123,6 @@ export default class Securities extends Vue {
     private get segments() { return this.segmentState.items; }
     private get territories() { return this.territoryState.items; }
     private get types() { return this.typeState.items; }
-
 
     private get markets(){ return this.marketState.items; }
 
@@ -133,21 +144,24 @@ export default class Securities extends Vue {
         );
     }
 
-    private created(){
-        //console.log(this.securities);
-        //console.log(this.categories);
+    private created(){ }
+
+    private onClickCreateFactory(which: SecurityDescriptors){
+        return () => {
+           this.routingService.navigateTo(Routes.SecuritiesDetails, {
+               query: {id: "0", which: `${which}`},
+           });
+        }
     }
 
-    private onClickCategory(category: SecurityCategoryModel){
-        //console.log(category);
-    }
-
-    private onClickSecurity(security: SecurityModel){
-        //console.log(security);
+    private onClickFactory(which: SecurityDescriptors){
+        return (descriptor: SecurityModel | SecurityCategoryModel | SecurityDescriptor ) => {
+            console.log(`${SecurityDescriptors[which]} ${descriptor.id}`);
+        }
     }
 
     private renderFnCategory(category: SecurityCategoryModel){
-        console.log(category);
+        
         return (
             <div>
                 <label>{category.text} </label>
@@ -181,6 +195,14 @@ export default class Securities extends Vue {
         
         .list-item-text
             flex: 1
+
+        &.create
+            background-color: green
+            color: white
+            font-weight: 600
+
+            &:hover
+                background-color: darkgreen
     
     /deep/ .tab-headings li a
         min-width: 6.3125rem
