@@ -53,6 +53,11 @@ export default class ListView extends Vue {
 </script>
 
 <style lang="sass" scoped>
+ul
+    list-style: none;
+    padding-left: 0
+    margin-left: 0
+    
 .list-item-content
     display: flex
     align-items: center

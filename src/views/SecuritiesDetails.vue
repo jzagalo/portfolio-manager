@@ -7,6 +7,41 @@
 
     div.security-details
         form
+            div(v-if="isSecurities")
+                h2 Security
+                label Symbol
+                input(
+                    type="text"
+                    v-model="securitySymbol"
+                )
+                label Last
+                input(
+                    type="number"
+                    step="0.01"
+                    v-model.number="securityLast"
+                )
+                label Category
+                select(v-model="securityCategory")
+                    option(
+                        v-for="category in categories"
+                        v-bind:key="category.id"
+                        v-bind:value="category"
+                    ) {{ category.text }}
+                label Market
+                select(v-model="securityMarket")
+                    option(
+                        v-for="market in markets"
+                        v-bind:key="market.id"
+                        v-bind:value="market"
+                    ) {{ market.text}}
+                label Recommendation
+                select(v-model="securityRecommendation")
+                    option(
+                        v-for="recommendation in recommendations"
+                        v-bind:key="recommendation.id"
+                        v-bind:value="recommendation.id"
+                    ) {{ recommendation.text }}
+
             div(v-if="isCategories")
                 h2 Category
                 label Territory
@@ -53,9 +88,11 @@ import {
     GETTER_SECURITY_MARKET, GETTER_SECURITY_SEGMENT,
     GETTER_SECURITY_TERRITORY, GETTER_SECURITY_TYPE,
     GETTER_SECURITY_SEGMENTS, GETTER_SECURITY_TERRITORIES, GETTER_SECURITY_TYPES,
+    GETTER_SECURITY_CATEGORIES, GETTER_SECURITY_MARKETS,
     Getter, GetterCategory, GetterMarket, GetterSecurity,
     GetterSegment, GetterTerritory, GetterType,
     SecuritySegmentModel, SecurityTerritoryModel, SecurityTypeModel,
+    SecurityCategoryModel, SecurityMarketModel, SecurityRecommendations,
 } from "@/store";
 import { SecurityDescriptors } from "@/views/types";
 
@@ -74,6 +111,8 @@ export default class SecuritiesDetails extends Vue{
     @Getter(GETTER_SECURITY_SEGMENTS) private segments!: SecuritySegmentModel[];
     @Getter(GETTER_SECURITY_TERRITORIES) private territories!: SecurityTerritoryModel[];
     @Getter(GETTER_SECURITY_TYPES) private types!: SecurityTypeModel[];
+    @Getter(GETTER_SECURITY_CATEGORIES) private categories!: SecurityCategoryModel[];
+    @Getter(GETTER_SECURITY_MARKETS) private markets!: SecurityMarketModel[];
 
     private id = 0;
     private text = "";
@@ -81,6 +120,12 @@ export default class SecuritiesDetails extends Vue{
     private categorySegment: SecuritySegmentModel | null = null;
     private categoryTerritory: SecurityTerritoryModel | null = null;
     private categoryType: SecurityTypeModel | null = null;
+
+    private securityCategory: SecurityCategoryModel | null = null;
+    private securityLast = 0;
+    private securityMarket: SecurityMarketModel|null = null;
+    private securityRecommendation = SecurityRecommendations.Buy;
+    private securitySymbol = "";
 
     private get isMarkets() {
         return this.which === SecurityDescriptors.Markets;
@@ -96,6 +141,15 @@ export default class SecuritiesDetails extends Vue{
     }
     private get isCategories() {
         return this.which === SecurityDescriptors.Categories;
+    }
+    private get isSecurities(){
+        return this.which === SecurityDescriptors.Securities;
+    }
+    private get recommendations(){
+        return Object.keys(SecurityRecommendations)
+                    .filter((x) => isNaN(Number(x)) === false)
+                    .map((x) => parseInt(x, 10))
+                    .map((x) => ({ id: x, text: SecurityRecommendations[x] }));
     }
 
     private mounted()   {
@@ -131,9 +185,13 @@ export default class SecuritiesDetails extends Vue{
             }
             case SecurityDescriptors.Securities: {
                 const security = this.getterSecurity(this.id);
-                console.log(security);
-                return;
+                this.securityCategory = security.category;
+                this.securityLast = security.last;
+                this.securityMarket = security.market;
+                this.securityRecommendation = security.recommendation;
+                this.securitySymbol = security.symbol;
             }
+            return;
             case SecurityDescriptors.Segments: {
                 const segment = this.getterSegment(this.id);
                 this.text = segment.text;
@@ -144,13 +202,14 @@ export default class SecuritiesDetails extends Vue{
                 this.text = territory.text;
                 return;
             }
-             case SecurityDescriptors.Types: {
+            case SecurityDescriptors.Types: {
                 const type = this.getterType(this.id);
                 this.text = type.text;
                 return;
-             }
-            default:
+            }
+            default: {
                 return;
+            }
         }
     }
 }
