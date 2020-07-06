@@ -13,13 +13,13 @@ export interface ISecurityModelConfig {
 
 export class SecurityModel {
     private _category: SecurityCategoryModel | null = null;
-    private _categoryId: number;
+    public _categoryId: number;
     private _id: number;
-    private _last: number;
+    public _last: number;
     private _market: SecurityMarketModel | null = null;
-    private _marketId: number;
-    private _recommendation: SecurityRecommendations;
-    private _symbol: string;
+    public _marketId: number;
+    public _recommendation: SecurityRecommendations;
+    public _symbol: string;
 
     public get category() { return this._category; }
     public get categoryId() { return this._categoryId; }

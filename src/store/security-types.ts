@@ -1,15 +1,15 @@
 
 import {
         STATE_SECURITY_MARKETS, STATE_SECURITY_SEGMENTS,
-        STATE_SECURITY_TERRITORIES, 
-        STATE_SECURITY_TYPES,  
-        STATE_SECURITY_CATEGORIES,STATE_SECURITIES,   
+        STATE_SECURITY_TERRITORIES,
+        STATE_SECURITY_TYPES,
+        STATE_SECURITY_CATEGORIES,STATE_SECURITIES,
         GETTER_SECURITIES,GETTER_SECURITY,GETTER_SECURITY_CATEGORIES,
         GETTER_SECURITY_CATEGORY,GETTER_SECURITY_MARKET,
         GETTER_SECURITY_MARKETS,GETTER_SECURITY_SEGMENT,
         GETTER_SECURITY_SEGMENTS,GETTER_SECURITY_TERRITORIES,
-        GETTER_SECURITY_TERRITORY,GETTER_SECURITY_TYPE, 
-        GETTER_SECURITY_TYPES,      
+        GETTER_SECURITY_TERRITORY,GETTER_SECURITY_TYPE,
+        GETTER_SECURITY_TYPES,
     } from "@/store/store-constants";
 
 import { SecurityMarketModel} from "@/store/security-market-model";
@@ -83,3 +83,10 @@ export interface ISecurityGetters {
     [GETTER_SECURITY_TYPE]: GetterType;
     [GETTER_SECURITY_TYPES]: SecurityTypeModel[];
 }
+
+export type PayloadUpdateSecurity = SecurityModel;
+export type PayloadUpdateSecurityCategory = SecurityCategoryModel;
+export type PayloadUpdateSecurityMarket = SecurityMarketModel;
+export type PayloadUpdateSecuritySegment = SecuritySegmentModel;
+export type PayloadUpdateSecurityTerritory = SecurityTerritoryModel;
+export type PayloadUpdateSecurityType = SecurityTypeModel;

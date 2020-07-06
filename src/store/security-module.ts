@@ -1,4 +1,7 @@
 import {
+    ACTION_UPDATE_SECURITY, ACTION_UPDATE_SECURITY_CATEGORY,
+    ACTION_UPDATE_SECURITY_MARKET, ACTION_UPDATE_SECURITY_SEGMENT,
+    ACTION_UPDATE_SECURITY_TERRITORY, ACTION_UPDATE_SECURITY_TYPE,
     STATE_SECURITIES, STATE_SECURITY_CATEGORIES,
     STATE_SECURITY_MARKETS, STATE_SECURITY_SEGMENTS,
     STATE_SECURITY_TERRITORIES, STATE_SECURITY_TYPES,
@@ -8,13 +11,21 @@ import {
     GETTER_SECURITY_SEGMENTS, GETTER_SECURITY_TERRITORIES,
     GETTER_SECURITY_TERRITORY, GETTER_SECURITY_TYPE,
     GETTER_SECURITY_TYPES,
+    MUTATION_UPDATE_SECURITY, MUTATION_UPDATE_SECURITY_CATEGORY,
+    MUTATION_UPDATE_SECURITY_MARKET, MUTATION_UPDATE_SECURITY_SEGMENT,
+    MUTATION_UPDATE_SECURITY_TERRITORY,  MUTATION_UPDATE_SECURITY_TYPE,
 } from "@/store/store-constants";
-
+import { Store } from "vuex";
 
 import { StoreActions, StoreActionValidator } from "@/store/store-action-validators";
 import { findAll , findById, undefinedMessage } from "@/store/functions";
-import { ISecurityState, ISecurityGetters } from "@/store/security-types";
-import { IStoreState, StoreGetterTree } from "@/store/store-types";
+import {
+        ISecurityState, ISecurityGetters,
+        PayloadUpdateSecurity, PayloadUpdateSecurityCategory,
+        PayloadUpdateSecurityMarket, PayloadUpdateSecuritySegment,
+        PayloadUpdateSecurityTerritory, PayloadUpdateSecurityType,
+ } from "@/store/security-types";
+import { IStoreState, StoreGetterTree, StoreActionTree, StoreContext, StoreMutationTree } from "@/store/store-types";
 
 import { initialState as categoryState } from "@/store/security-category-initial-state";
 import { initialState as marketState } from "@/store/security-market-initial-state";
@@ -34,12 +45,13 @@ export const securitiesState: ISecurityState = {
 }
 
 export const securitiesGetters: StoreGetterTree = {
-    [GETTER_SECURITIES]:(state: IStoreState, getters: ISecurityGetters) => {        
+
+    [GETTER_SECURITIES]:(state: IStoreState, getters: ISecurityGetters) => {
         return state[STATE_SECURITIES].items.map((x) => getters[GETTER_SECURITY](x.id));
     },
     [GETTER_SECURITY]: (state: IStoreState, getters: ISecurityGetters) => {
         return (id: number) => {
-           
+
             const security = findById(state[STATE_SECURITIES], id);
             storeActionValidator
                 .begin()
@@ -47,9 +59,9 @@ export const securitiesGetters: StoreGetterTree = {
                 .throwIf(security)
                 .isUndefined(undefinedMessage("security", id, state[STATE_SECURITIES].index));
 
-            const category = getters[GETTER_SECURITY_CATEGORY](security!.categoryId);            
+            const category = getters[GETTER_SECURITY_CATEGORY](security!.categoryId);
             const market = getters[GETTER_SECURITY_MARKET](security!.marketId);
-           
+
             return security!
                     .setCategory(category)
                     .setMarket(market);
@@ -81,7 +93,7 @@ export const securitiesGetters: StoreGetterTree = {
             return category
                 .setSegment(segment)
                 .setTerritory(territory)
-                .setType(type);       
+                .setType(type);
         };
     },
 
@@ -91,11 +103,11 @@ export const securitiesGetters: StoreGetterTree = {
 
             return market;
         }
-    },  
+    },
 
-    [GETTER_SECURITY_MARKETS]: (state: IStoreState) => {        
-        return findAll(state[STATE_SECURITY_MARKETS]);    
-    }, 
+    [GETTER_SECURITY_MARKETS]: (state: IStoreState) => {
+        return findAll(state[STATE_SECURITY_MARKETS]);
+    },
 
     [GETTER_SECURITY_SEGMENT]:(state: IStoreState) => {
         return (id: number) => {
@@ -111,9 +123,9 @@ export const securitiesGetters: StoreGetterTree = {
         }
     },
 
-    [GETTER_SECURITY_SEGMENTS]: (state: IStoreState) => {        
-        return findAll(state[STATE_SECURITY_SEGMENTS]);    
-    }, 
+    [GETTER_SECURITY_SEGMENTS]: (state: IStoreState) => {
+        return findAll(state[STATE_SECURITY_SEGMENTS]);
+    },
 
     [GETTER_SECURITY_TERRITORIES]: (state: IStoreState) => {
         return findAll(state[STATE_SECURITY_TERRITORIES]);
@@ -140,13 +152,56 @@ export const securitiesGetters: StoreGetterTree = {
                 .begin()
                 .while(StoreActions.Getting)
                 .throwIf(type)
-                .isUndefined(undefinedMessage("type", id, state[STATE_SECURITY_TYPES].index));            
+                .isUndefined(undefinedMessage("type", id, state[STATE_SECURITY_TYPES].index));
 
             return type;
         }
-    }, 
+    },
 
     [GETTER_SECURITY_TYPES]: (state: IStoreState) => {
         return findAll(state[STATE_SECURITY_TYPES]);
     },
+}
+
+export const securitiesActions: StoreActionTree = {
+    [ACTION_UPDATE_SECURITY](this: Store<IStoreState>, {commit}: StoreContext, payload: PayloadUpdateSecurity){
+        const category = (this.getters as ISecurityGetters)[GETTER_SECURITY_CATEGORY](payload.categoryId);
+        const market = (this.getters as ISecurityGetters)[GETTER_SECURITY_MARKET](payload.marketId);
+
+        payload.setCategory(category);
+        payload.setMarket(market);
+        commit(MUTATION_UPDATE_SECURITY, payload);
+    },
+    [ACTION_UPDATE_SECURITY_CATEGORY](this: Store<IStoreState>, { commit } : StoreContext,
+        payload: PayloadUpdateSecurityCategory,){
+            const segment = (this.getters as ISecurityGetters)[GETTER_SECURITY_SEGMENT](payload.segmentId);
+            const territory = (this.getters as ISecurityGetters)[GETTER_SECURITY_TERRITORY](payload.territoryId);
+            const type = (this.getters as ISecurityGetters)[GETTER_SECURITY_SEGMENT](payload.typeId);
+
+            payload.setSegment(segment);
+            payload.setSegment(territory);
+            payload.setType(type);
+            commit(MUTATION_UPDATE_SECURITY_CATEGORY, payload);
+    },
+    [ACTION_UPDATE_SECURITY_MARKET](this: Store<IStoreState>, { commit }: StoreContext, payload: PayloadUpdateSecurityMarket){
+        commit(MUTATION_UPDATE_SECURITY_MARKET, payload);
+    },
+    [ACTION_UPDATE_SECURITY_TYPE](this: Store<IStoreState>, { commit }: StoreContext, payload: PayloadUpdateSecurityType){
+        commit(MUTATION_UPDATE_SECURITY_TYPE, payload);
+    }
+}
+
+export const securitiesMutations: StoreMutationTree = {
+    [MUTATION_UPDATE_SECURITY](state: IStoreState, payload: PayloadUpdateSecurity){
+        const security = findById(state[STATE_SECURITIES], payload.id);
+
+        storeActionValidator
+            .begin()
+            .while(StoreActions.Updating)
+            .throwIf(security)
+            .isUndefined(undefinedMessage("security", payload.id, state[STATE_SECURITIES].index));
+
+        security!.categoryId = payload.categoryId;
+        security!.last = payload.last
+    }
 }
