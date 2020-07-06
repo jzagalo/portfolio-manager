@@ -1,6 +1,6 @@
 <template lang="pug">
     div.animatable(
-        v-bind:class="cssClass"        
+        v-bind:class="cssClass"
         v-bind:style="{ animationDuration: duration }"
         v-on:animationend.prevent="animationEnd" )
         slot
@@ -33,9 +33,9 @@ export default class AnimatableItem extends Vue {
     @Prop() private readonly subject!: AnimationSubject;
     @Prop({ default: "200ms"}) private readonly duration!: string;
 
-    public $props!: Props<{ 
+    public $props!: Props<{
         complete: () => void;
-        update: (x: AnimationStages) => void;  
+        update: (x: AnimationStages) => void;
     }>;
 
     private readonly animationMap = new Map<AnimationTypes, string>([
@@ -57,7 +57,7 @@ export default class AnimatableItem extends Vue {
         return `${this.beforeCssClass} ${this.activeCssClass} ${this.afterCssClass}`
     }
 
-    private beforeDestroy(){     
+    private beforeDestroy(){
         this.unsubscribe.next();
         this.unsubscribe.complete();
     }
@@ -68,23 +68,22 @@ export default class AnimatableItem extends Vue {
                 .subscribe(this.animate);
     }
 
-    private animate(options: AnimateOptions): void{       
+    private animate(options: AnimateOptions): void{
         this.options = options;
-        const animation = this.animationMap.get(this.options.type);   
-        console.log(this.getCssClass(`${animation}Before`));    
+        const animation = this.animationMap.get(this.options.type);
 
         this.afterCssClass = "";
         this.updateWithPreAndPost(
             AnimationStages.BeforeApplyPre,
             AnimationStages.BeforeApplyPost,
             () => this.beforeCssClass = this.getCssClass(`${animation}Before`));
-        
+
         requestAnimationFrame(() => {
             this.updateWithPreAndPost(
                 AnimationStages.ActiveApplyPre,
                 AnimationStages.ActiveApplyPost,
                 () => this.activeCssClass = this.getCssClass(`${animation}Active`));
-            
+
             requestAnimationFrame(() => {
                 this.updateWithPreAndPost(
                     AnimationStages.BeforeRemovePre,
@@ -104,7 +103,6 @@ export default class AnimatableItem extends Vue {
 
     private animationEnd(){
         const animation = this.animationMap.get(this.options.type);
-        console.log(animation + '--,');
 
         this.updateWithPreAndPost(
             AnimationStages.AfterApplyPre,
@@ -128,9 +126,8 @@ export default class AnimatableItem extends Vue {
         this.options.type = AnimationTypes.None;
     }
 
-    private getCssClass(index: string){    
-        console.log(index + ''); 
-        const css = animationClasses[index];        
+    private getCssClass(index: string){
+        const css = animationClasses[index];
         if (typeof(css) === "undefined") {
             // tslint:disable-next-line:no-console
             console.warn(`CSS animation class for ${index} is undefined.`);

@@ -1,42 +1,42 @@
 <template lang="pug">
-   
-    TabContainer(v-bind:tabs="tabs") 
-        TabEntry       
+
+    TabContainer(v-bind:tabs="tabs")
+        TabEntry
             ListView(
                 v-bind:items="securities"
                 v-bind:onClick="onClickFactory(descriptorSecurities)"
                 v-bind:onClickCreate="onClickCreateFactory(descriptorSecurities)"
                 v-bind:renderFn="renderFnSecurity"
-            )/ 
-        TabEntry      
+            )/
+        TabEntry
             ListView(
-                v-bind:items="categories"       
+                v-bind:items="categories"
                 v-bind:onClick="onClickFactory(descriptorCategories)"
                 v-bind:onClickCreate="onClickCreateFactory(descriptorCategories)"
                 v-bind:renderFn="renderFnCategory"
-            )/ 
-        TabEntry           
+            )/
+        TabEntry
             ListView(
                 v-bind:items="markets"
                 v-bind:onClick="onClickFactory(descriptorMarkets)"
                 v-bind:onClickCreate="onClickCreateFactory(descriptorMarkets)"
                 v-bind:renderFn="renderFnDescriptor"
-            )/   
-        TabEntry  
+            )/
+        TabEntry
             ListView(
             v-bind:items="segments"
             v-bind:onClick="onClickFactory(descriptorSegments)"
             v-bind:onClickCreate="onClickCreateFactory(descriptorSegments)"
             v-bind:renderFn="renderFnDescriptor"
-            )/  
-        TabEntry       
+            )/
+        TabEntry
             ListView(
                 v-bind:items="territories"
                 v-bind:onClick="onClickFactory(descriptorTerritories)"
                 v-bind:onClickCreate="onClickCreateFactory(descriptorTerritories)"
                 v-bind:renderFn="renderFnDescriptor"
-            )/  
-        TabEntry       
+            )/
+        TabEntry
             ListView(
                 v-bind:items="types"
                 v-bind:onClick="onClickFactory(descriptorTypes)"
@@ -88,7 +88,7 @@ enum Descriptors {
         TabHeader
     }
 })
-export default class Securities extends Vue {    
+export default class Securities extends Vue {
     @Getter(GETTER_SECURITIES) private readonly securities!: SecurityModel[];
     @Getter(GETTER_SECURITY_CATEGORIES) private readonly categories!: SecurityCategoryModel[];
     @Getter(GETTER_SECURITY_MARKETS) private readonly marketss!: SecurityMarketModel[];
@@ -96,12 +96,12 @@ export default class Securities extends Vue {
     @Getter(GETTER_SECURITY_TERRITORIES) private readonly territoriess!: SecurityTerritoryModel[];
     @Getter(GETTER_SECURITY_TYPES) private readonly typess!: SecurityTypeModel[];
 
-    @State(STATE_SECURITY_MARKETS) private readonly marketState!: ISecurityMarketsModelState;    
+    @State(STATE_SECURITY_MARKETS) private readonly marketState!: ISecurityMarketsModelState;
     @State(STATE_SECURITY_SEGMENTS) private readonly segmentState!: ISecuritySegmentModelState;
     @State(STATE_SECURITY_TERRITORIES) private readonly territoryState!: ISecurityTerritoryModelState;
     @State(STATE_SECURITY_TYPES) private readonly typeState!: ISecurityTypeModelState;
 
-    @Inject() private readonly routingService!: RoutingService;   
+    @Inject() private readonly routingService!: RoutingService;
 
     private readonly descriptorCategories = SecurityDescriptors.Categories;
     private readonly descriptorMarkets = SecurityDescriptors.Markets;
@@ -118,7 +118,7 @@ export default class Securities extends Vue {
         "Territories",
         "Types",
     ];
-    
+
 
     private get segments() { return this.segmentState.items; }
     private get territories() { return this.territoryState.items; }
@@ -136,7 +136,6 @@ export default class Securities extends Vue {
     }
 
     private renderFnDescriptor(descriptor: SecurityDescriptor){
-        console.log(descriptor.text);
         return(
             <div>
                 <label>{ descriptor.text }</label>
@@ -147,7 +146,9 @@ export default class Securities extends Vue {
     private created(){ }
 
     private onClickCreateFactory(which: SecurityDescriptors){
+        console.log("Tristian");
         return () => {
+
            this.routingService.navigateTo(Routes.SecuritiesDetails, {
                query: {id: "0", which: `${which}`},
            });
@@ -155,13 +156,18 @@ export default class Securities extends Vue {
     }
 
     private onClickFactory(which: SecurityDescriptors){
+        console.log(which);
         return (descriptor: SecurityModel | SecurityCategoryModel | SecurityDescriptor ) => {
-            console.log(`${SecurityDescriptors[which]} ${descriptor.id}`);
+            this.routingService.navigateTo(
+                Routes.SecuritiesDetails, {
+                    query: {id: `${descriptor.id}`, which: `${which}`},
+                }
+            );
         }
     }
 
     private renderFnCategory(category: SecurityCategoryModel){
-        
+
         return (
             <div>
                 <label>{category.text} </label>
@@ -170,7 +176,7 @@ export default class Securities extends Vue {
         );
     }
 
-    private renderFnSecurity(security: SecurityModel){
+    private renderFnSecurity(security: SecurityModel) {
         return (
             <div>
                 <label>{security.symbol} </label>
@@ -178,7 +184,7 @@ export default class Securities extends Vue {
             </div>
         );
     }
-    
+
 }
 </script>
 
@@ -192,18 +198,12 @@ export default class Securities extends Vue {
 
         > *
             pointer-events: none
-        
+
         .list-item-text
             flex: 1
 
-        &.create
-            background-color: green
-            color: white
-            font-weight: 600
 
-            &:hover
-                background-color: darkgreen
-    
+
     /deep/ .tab-headings li a
         min-width: 6.3125rem
 

@@ -23,37 +23,37 @@ const about = new RouteEntry({
     component: () => import(/* webpackChunkName: "about" */ "../../views/About.vue"),
     name: "about",
     parent: home,
-    path: "/about",  
-    route: Routes.About 
+    path: "/about",
+    route: Routes.About
 });
 
 const accounts = new RouteEntry({
     component: () => import(/* webpackChunkName: "about" */ "../../views/Accounts.vue"),
     name: "accounts",
     parent: home,
-    path: "/accounts",  
-    route: Routes.Accounts 
+    path: "/accounts",
+    route: Routes.Accounts
 });
 
 const securities = new RouteEntry({
     component: () => import(/* webpackChunkName: "about" */ "../../views/Securities.vue"),
     name: "securities",
     parent: home,
-    path: "/securities",  
-    route: Routes.Securities 
+    path: "/securities",
+    route: Routes.Securities
 });
 
 const securitiesDetails = new RouteEntry({
-    component: () => import(/* webpackChunkName: "about" */ "../../views/Securities.vue"),
+    component: () => import(/* webpackChunkName: "about" */ "../../views/SecuritiesDetails.vue"),
     name: "securities-details",
     parent: securities,
-    path: "/securities-details",  
-    route: Routes.SecuritiesDetails 
+    path: "/securities-details",
+    route: Routes.SecuritiesDetails
 });
 
 export class RoutingService {
     private readonly _navigate = new Subject<IRoute>();
-    private readonly _navigate$ = this._navigate.asObservable(); 
+    private readonly _navigate$ = this._navigate.asObservable();
     private readonly _navigateBack = new Subject<IRoute>();
     private readonly _navigateBack$ = this._navigateBack.asObservable();
     private readonly _routeChanged = new Subject<void>();
@@ -65,14 +65,14 @@ export class RoutingService {
     public get routeChanged$(){
         return this._routeChanged$;
     }
-    
+
     private readonly _routes = new Map<Routes, RouteEntry>([
         [Routes.About, about],
-        [Routes.Home, home ],       
+        [Routes.Home, home],
         [Routes.Accounts, accounts ],
         [Routes.Securities, securities ],
         [Routes.SecuritiesDetails, securitiesDetails ]
-    ]);  
+    ]);
 
     private readonly _values = Array.from(this._routes.values());
     private readonly _router = new Router({
@@ -107,8 +107,9 @@ export class RoutingService {
 
     public queryParam<Q, R extends string | number=string>(
         func: (q: Q) => string, transform: (x: string) => R = (x) => x as R){
-            console.log(this);
+
         const param = func((this._router.currentRoute.query as unknown) as Q);
+        console.log(param);
         return transform(param);
     }
 
@@ -167,16 +168,17 @@ export class RoutingService {
             this.back();
             return;
         }
-        
+
         this._navigate.next(this.createRoute(to, options));
         this._routeChanged.next();
     }
 
     public queryString = (route: IRoute) => {
+        console.log("rs "+ route);
         return typeof(route.query) !== "undefined" ?
         `?${Object.keys(route.query)
             .map((x) => `${x}=${route.query![x]}`)
-            .join("&")       
+            .join("&")
         }`: "";
     }
 }

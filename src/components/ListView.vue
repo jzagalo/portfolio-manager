@@ -6,12 +6,12 @@ import { Vue, Component, Prop } from 'vue-property-decorator';
 @Component
 export default class ListView extends Vue {
     @Prop() private readonly items!: any[];
-    @Prop() private readonly keyFn!: (item: any) => number; 
+    @Prop() private readonly keyFn!: (item: any) => number;
     @Prop() private readonly onClick!: (item: any) => void;
     @Prop() private readonly renderFn!: (item: any) => JSX.Element;
     @Prop() private readonly onClickCreate!:() => void ;
 
-    
+
 
     private idFn = (item: any) => {
         return typeof(this.keyFn) !== "undefined" ?
@@ -24,31 +24,30 @@ export default class ListView extends Vue {
             return;
         }
 
-        return (
+        const content = this.items.map((x, index) => {
+            return( <li key="{this.idFn}" >
+                        <a class="list-item-content" href="#void" onClick={() => this.onClick(x)}>
+                            <div class="list-item-text">{this.renderFn(x)}</div>
+                            <span>&rang;</span>
+                        </a>
+                    </li>);
+            }
+        );
+
+        return(
             <ul>
-                {
-                    this.onClickCreate &&
+                {  this.onClickCreate &&
                     <li>
                         <a class="list-item-content create" href="#void" onClick={() => this.onClickCreate()}>
                             <div class="list-item-text">Create</div>
-                            <span>&#43;</span>    
-                        </a>                       
-                    </li>  
-                }
-
-                {
-                    this.items.map((x, index) => {  
-                        <li key="{this.idFn}" >
-                            <a class="list-item-content" href="#void" onClick={() => this.onClick(x)}>
-                                <div class="list-item-text">{this.renderFn(x)}</div>
-                                <span>&rang;</span>    
-                            </a>                       
-                        </li>        
-                    })
-                }
+                            <span>&#43;</span>
+                        </a>
+                    </li>
+}
+                { content }
             </ul>
         );
-        
+
     }
 }
 </script>
@@ -63,4 +62,13 @@ export default class ListView extends Vue {
 
     .list-item-text
         flex: 1
+        list-style-type: none
+
+    &.create
+            background-color: green
+            color: white
+            font-weight: 600
+
+            &:hover
+                background-color: darkgreen
 </style>

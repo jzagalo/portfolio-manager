@@ -1,17 +1,17 @@
 <template lang="pug">
 div.router-view(v-bind:class="{ 'is-animating': isAnimating }")
-    AnimatableItem.router-view-animatable(        
+    AnimatableItem.router-view-animatable(
         v-bind:subject="animationSubject")
         router-view/
 </template>
 
 <script lang="ts">
 import {Vue, Component, Inject } from 'vue-property-decorator';
-import { Routes, RoutingService, RouteEntry, IRoute } from "@/components/routing";
+import { Routes, RoutingService, RouteEntry, IRoute, IRouteOptions } from "@/components/routing";
 import { AnimationTypes, AnimateOptions, AnimationSubjectOptions} from "@/components/animations/types";
 import AnimatableItem from "@/components/animations/AnimatableItem.vue";
 import { AnimationSubject } from "@/components/animations";
-import { ACTION_PUSH_ROUTE, Action, ActionFn, PushRoutePayload, 
+import { ACTION_PUSH_ROUTE, Action, ActionFn, PushRoutePayload,
         ACTION_POP_ROUTE, PopRoutePayload } from "@/store";
 
 @Component({
@@ -66,22 +66,22 @@ export default class TheRouterOutlet extends Vue{
          if(this.isAnimatingIn){
             this.isAnimatingIn = false;
         }
-        
+
         this.isAnimatingIn = true;
 
         if(this.isAnimatingOut === false){
             return;
         }
        this.isAnimatingOut = false;
-       this.$router.push(`${this.toEntry.path}${this.routingService.queryString(this.toRoute)}`);    
+       this.$router.push(`${this.toEntry.path}${this.routingService.queryString(this.toRoute)}`);
        this.animationSubject.next(this.inAnimation);
-       this.inAnimation = AnimationTypes.None; 
+       this.inAnimation = AnimationTypes.None;
     }
 
      private animationCompleteOut() {
         this.isAnimatingOut = false;
         this.isAnimatingIn = true;
-        this.$router.push(this.toEntry.path);
+        this.$router.push(`${this.toEntry.path}${this.routingService.queryString(this.toRoute)}`);
         this.animationSubject.next(this.inAnimation, this.animationsOptionsIn);
     }
 
@@ -103,7 +103,7 @@ export default class TheRouterOutlet extends Vue{
         this.routingService
             .navigateBack$
             .subscribe(this.navigateBack);
-    }  
+    }
 
     private navigateBack(route: IRoute){
         this.animateBack(route);
@@ -132,5 +132,5 @@ export default class TheRouterOutlet extends Vue{
             overflow-x: hidden
     .router-view-animatable
         flex: 1
-        
+
 </style>
