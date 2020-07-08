@@ -69,6 +69,7 @@
             +securityDescriptor("Segment", "isSegments")
             +securityDescriptor("Territory", "isTerritories")
             +securityDescriptor("Type", "isTypes")
+            DetailsActionButtons(v-bind:save="save")/
 </template>
 
 <script lang="ts">
@@ -80,10 +81,17 @@ interface IQuery {
 
 import { Component, Inject, Vue } from "vue-property-decorator";
 import { RoutingService, Routes } from "@/components/routing";
+import DetailsActionButtons from "@/components/DetailsActionButtons.vue";
 import {
     ACTION_PUSH_ROUTE, Action,
     ActionFn, IRouteState,
     PushRoutePayload,STATE_ROUTES, State,
+    ACTION_UPDATE_SECURITY,
+    ACTION_UPDATE_SECURITY_CATEGORY,
+    ACTION_UPDATE_SECURITY_MARKET,
+    ACTION_UPDATE_SECURITY_SEGMENT,
+    ACTION_UPDATE_SECURITY_TERRITORY,
+    ACTION_UPDATE_SECURITY_TYPE,
     GETTER_SECURITY, GETTER_SECURITY_CATEGORY,
     GETTER_SECURITY_MARKET, GETTER_SECURITY_SEGMENT,
     GETTER_SECURITY_TERRITORY, GETTER_SECURITY_TYPE,
@@ -93,13 +101,34 @@ import {
     GetterSegment, GetterTerritory, GetterType,
     SecuritySegmentModel, SecurityTerritoryModel, SecurityTypeModel,
     SecurityCategoryModel, SecurityMarketModel, SecurityRecommendations,
+    PayloadUpdateSecurity,
+    PayloadUpdateSecurityCategory,
+    PayloadUpdateSecurityMarket,
+    PayloadUpdateSecuritySegment,
+    PayloadUpdateSecurityTerritory,    
+    PayloadUpdateSecurityType,
+    SecurityModel,
 } from "@/store";
 import { SecurityDescriptors } from "@/views/types";
 
-@Component
+type ActionUpdateTerritory = ActionFn<PayloadUpdateSecurityTerritory>;
+
+@Component({
+    components:{ 
+        DetailsActionButtons,
+    }
+})
 export default class SecuritiesDetails extends Vue{
+
+    
     @Inject() private readonly routingService!: RoutingService;
     @Action(ACTION_PUSH_ROUTE) private readonly pushRoute!: ActionFn<PushRoutePayload>;
+    @Action(ACTION_UPDATE_SECURITY) private readonly updateSecurity!: ActionFn<PayloadUpdateSecurity>;
+    @Action(ACTION_UPDATE_SECURITY_CATEGORY) private readonly updateCategory!: ActionFn<PayloadUpdateSecurityCategory>;
+    @Action(ACTION_UPDATE_SECURITY_MARKET) private readonly updateMarket!: ActionFn<PayloadUpdateSecurityMarket>;
+    @Action(ACTION_UPDATE_SECURITY_SEGMENT) private readonly updateSegment!: ActionFn<PayloadUpdateSecuritySegment>;
+    @Action(ACTION_UPDATE_SECURITY_TERRITORY) private readonly updateTerritory!: ActionUpdateTerritory;
+    @Action(ACTION_UPDATE_SECURITY_TYPE) private readonly updateType!: ActionFn<PayloadUpdateSecurityType>;
     @State(STATE_ROUTES) private readonly routeState!: IRouteState;
 
     @Getter(GETTER_SECURITY_CATEGORY) private getterCategory!: GetterCategory;
@@ -207,8 +236,87 @@ export default class SecuritiesDetails extends Vue{
                 this.text = type.text;
                 return;
             }
+
             default: {
                 return;
+            }
+        }
+    }
+
+    public save(){
+        switch(this.which){
+            case SecurityDescriptors.Categories:{
+                const category = new SecurityCategoryModel({
+                    id: this.id,
+                    segmentId: this.categorySegment!.id,
+                    territoryId: this.categoryTerritory!.id,
+                    typeId:this.categoryType!.id,
+                });
+                switch(this.id) {
+                    case 0:
+                        return;
+                    default:
+                        this.updateCategory(category);
+                        return;
+                }              
+            }
+            case SecurityDescriptors.Markets: {
+                const market = new SecurityMarketModel(this.id, this.text);
+                switch(this.id){
+                    case 0:
+                        return;
+                    default:
+                        this.updateMarket(market);
+                        return;
+                }                
+            }
+            case SecurityDescriptors.Securities:{
+                const security = new SecurityModel({
+                    categoryId: this.securityCategory!.id,
+                    id: this.id,
+                    last: this.securityLast,
+                    marketId: this.securityMarket!.id,
+                    recommendation: this.securityRecommendation,
+                    symbol: this.securitySymbol,
+                });
+                switch(this.id){
+                    case 0:
+                        return;
+                    default:
+                        this.updateSecurity(security);
+                        return;
+                }
+            }
+            case SecurityDescriptors.Segments:{
+                const segment = new SecuritySegmentModel(this.id, this.text);
+                switch(this.id){
+                    case 0:
+                        return;
+                    default:
+                        this.updateSegment(segment);
+                        return;
+                }
+            }
+            case SecurityDescriptors.Territories: {
+                const territory = new SecurityTerritoryModel(this.id, this.text);
+                switch(this.id) {
+                    case 0:
+                        return;
+                    default:
+                        this.updateTerritory(territory);
+                        return;
+
+                }
+            }
+            case SecurityDescriptors.Types: {
+                const type = new SecurityTypeModel(this.id, this.text);
+                switch(this.id){
+                    case 0:
+                        return;
+                    default:
+                        this.updateType(type);
+                        return;
+                }
             }
         }
     }

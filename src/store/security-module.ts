@@ -183,16 +183,23 @@ export const securitiesActions: StoreActionTree = {
             payload.setType(type);
             commit(MUTATION_UPDATE_SECURITY_CATEGORY, payload);
     },
+    [ACTION_UPDATE_SECURITY_SEGMENT](this: Store<IStoreState>, {commit}: StoreContext, payload: PayloadUpdateSecuritySegment){
+        commit(MUTATION_UPDATE_SECURITY_SEGMENT, payload);
+    },
+    [ACTION_UPDATE_SECURITY_TERRITORY]( this: Store<IStoreState>, { commit }: StoreContext, payload: PayloadUpdateSecurityTerritory) {
+        commit(MUTATION_UPDATE_SECURITY_TERRITORY, payload);
+    },
     [ACTION_UPDATE_SECURITY_MARKET](this: Store<IStoreState>, { commit }: StoreContext, payload: PayloadUpdateSecurityMarket){
         commit(MUTATION_UPDATE_SECURITY_MARKET, payload);
     },
     [ACTION_UPDATE_SECURITY_TYPE](this: Store<IStoreState>, { commit }: StoreContext, payload: PayloadUpdateSecurityType){
+        console.log("Updating Types");
         commit(MUTATION_UPDATE_SECURITY_TYPE, payload);
     }
 }
 
 export const securitiesMutations: StoreMutationTree = {
-    [MUTATION_UPDATE_SECURITY](state: IStoreState, payload: PayloadUpdateSecurity){
+    [MUTATION_UPDATE_SECURITY](state: IStoreState, payload: PayloadUpdateSecurity) {
         const security = findById(state[STATE_SECURITIES], payload.id);
 
         storeActionValidator
@@ -202,6 +209,64 @@ export const securitiesMutations: StoreMutationTree = {
             .isUndefined(undefinedMessage("security", payload.id, state[STATE_SECURITIES].index));
 
         security!.categoryId = payload.categoryId;
-        security!.last = payload.last
+        security!.last = payload.last;
+        security!.marketId = payload.marketId;
+        security!.recommendation = payload.recommendation;
+        security!.symbol = payload.symbol.toUpperCase();
+    },
+    [MUTATION_UPDATE_SECURITY_CATEGORY](state:IStoreState, payload: PayloadUpdateSecurityCategory){
+        const category = findById(state[STATE_SECURITY_CATEGORIES], payload.id);
+
+        storeActionValidator
+            .begin()
+            .while(StoreActions.Updating)
+            .throwIf(category)
+            .isUndefined(undefinedMessage("category",payload.id, state[STATE_SECURITY_CATEGORIES].index));
+
+            category!.segmentId = payload.segmentId;
+            category!.territoryId = payload.territoryId;
+            category!.typeId = payload.typeId;
+    },
+    [MUTATION_UPDATE_SECURITY_MARKET](state: IStoreState, payload: PayloadUpdateSecurityMarket){
+        const market = findById(state[STATE_SECURITY_MARKETS],payload.id);
+
+        storeActionValidator
+            .begin()
+            .while(StoreActions.Updating)
+            .throwIf(market)
+            .isUndefined(undefinedMessage("segment",payload.id, state[STATE_SECURITY_SEGMENTS].index));
+    },
+    [MUTATION_UPDATE_SECURITY_SEGMENT](state: IStoreState, payload: PayloadUpdateSecuritySegment){
+        const segment = findById(state[STATE_SECURITY_SEGMENTS], payload.id);
+
+        storeActionValidator
+            .begin()
+            .while(StoreActions.Updating)
+            .throwIf(segment)
+            .isUndefined(undefinedMessage("segment",payload.id, state[STATE_SECURITY_SEGMENTS].index));
+        
+        segment!.text = payload.text;
+    },
+    [MUTATION_UPDATE_SECURITY_TERRITORY](state: IStoreState, payload: PayloadUpdateSecurityTerritory) {
+        const territory = findById(state[STATE_SECURITY_TERRITORIES], payload.id);
+
+        storeActionValidator
+            .begin()
+            .while(StoreActions.Updating)
+            .throwIf(territory)
+            .isUndefined(undefinedMessage("territory", payload.id, state[STATE_SECURITY_TERRITORIES].index));
+
+        territory!.text = payload.text;
+    },
+    [MUTATION_UPDATE_SECURITY_TYPE](state: IStoreState, payload: PayloadUpdateSecurityType){
+        const type = findById(state[STATE_SECURITY_TYPES], payload.id);
+        console.log("MutatingType");
+        storeActionValidator
+            .begin()
+            .while(StoreActions.Updating)
+            .throwIf(type)
+            .isUndefined(undefinedMessage("type",payload.id, state[STATE_SECURITY_TYPES].index));
+        
+        type!.text = payload.text;
     }
 }

@@ -22,8 +22,14 @@ export class SecurityCategoryModel {
     public get id() { return this._id;  }
     public get segment(){ return this._segment; }
     public get segmentId(){ return this._segmentId }
+    public set segmentId(segmentId: number){ 
+        this._segmentId = segmentId;
+    }
     public get territory(){ return this._territory }
     public get territoryId(){ return this._territoryId }
+    public set territoryId(territoryId: number){ 
+         this._territoryId = territoryId; 
+    }
     public get text() {
         const text = { text : "undefined"};
         const territory = (this.territory || text).text;
@@ -34,6 +40,9 @@ export class SecurityCategoryModel {
 
     public get type(){  return this._type;  }
     public get typeId(){ return this._typeId;}
+    public set typeId(typeId: number){
+        this.typeId = typeId;
+    }
 
     constructor(config: ISecurityCategoryModelConfig){
         this._id = config.id;

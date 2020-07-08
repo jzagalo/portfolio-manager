@@ -12,23 +12,36 @@ export interface ISecurityModelConfig {
 }
 
 export class SecurityModel {
-    private _category: SecurityCategoryModel | null = null;
+    public _category: SecurityCategoryModel | null = null;
     public _categoryId: number;
-    private _id: number;
+    public _id: number;
     public _last: number;
-    private _market: SecurityMarketModel | null = null;
+    public _market: SecurityMarketModel | null = null;
     public _marketId: number;
     public _recommendation: SecurityRecommendations;
     public _symbol: string;
 
     public get category() { return this._category; }
+    public set categoryId(categoryId: number){
+        this._categoryId = categoryId;
+    }
     public get categoryId() { return this._categoryId; }
     public get id() { return this._id; }
     public get last() { return this._last; }
+    public set last(last: number) { this._last = last; }
     public get market() { return this._market; }
     public get marketId() { return this._marketId; }
+    public set marketId(marketId:number) { 
+        this._marketId = marketId; 
+    }    
     public get recommendation() { return this._recommendation; }
+    public set recommendation(recom:SecurityRecommendations) { 
+        this._recommendation = recom;
+    }
     public get symbol() { return this._symbol; }
+    public set symbol(symbol: string) { 
+         this._symbol = symbol;
+    }
 
     constructor(config: ISecurityModelConfig) {
         this._categoryId     = config.categoryId;
