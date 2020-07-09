@@ -34,10 +34,14 @@ export default class DetailsActionButtons extends Vue{
 </script>
 
 <style lang="sass" scoped>
+
+
 .buttons
     display: flex
 
     button
         flex: 1;
+
+
 
 </style>

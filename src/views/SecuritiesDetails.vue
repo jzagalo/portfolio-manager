@@ -86,6 +86,9 @@ import {
     ACTION_PUSH_ROUTE, Action,
     ActionFn, IRouteState,
     PushRoutePayload,STATE_ROUTES, State,
+    ACTION_ADD_SECURITY, ACTION_ADD_SECURITY_CATEGORY,
+    ACTION_ADD_SECURITY_MARKET, ACTION_ADD_SECURITY_SEGMENT,
+    ACTION_ADD_SECURITY_TERRITORY, ACTION_ADD_SECURITY_TYPE,
     ACTION_UPDATE_SECURITY,
     ACTION_UPDATE_SECURITY_CATEGORY,
     ACTION_UPDATE_SECURITY_MARKET,
@@ -101,12 +104,12 @@ import {
     GetterSegment, GetterTerritory, GetterType,
     SecuritySegmentModel, SecurityTerritoryModel, SecurityTypeModel,
     SecurityCategoryModel, SecurityMarketModel, SecurityRecommendations,
-    PayloadUpdateSecurity,
-    PayloadUpdateSecurityCategory,
-    PayloadUpdateSecurityMarket,
-    PayloadUpdateSecuritySegment,
-    PayloadUpdateSecurityTerritory,    
-    PayloadUpdateSecurityType,
+    PayloadUpdateSecurity, PayloadUpdateSecurityCategory,
+    PayloadUpdateSecurityMarket, PayloadUpdateSecuritySegment,
+    PayloadUpdateSecurityTerritory, PayloadUpdateSecurityType,
+    PayloadAddSecurity, PayloadAddSecurityCategory,
+    PayloadAddSecurityMarket, PayloadAddSecuritySegment,
+    PayloadAddSecurityTerritory, PayloadAddSecurityType, 
     SecurityModel,
 } from "@/store";
 import { SecurityDescriptors } from "@/views/types";
@@ -118,10 +121,14 @@ type ActionUpdateTerritory = ActionFn<PayloadUpdateSecurityTerritory>;
         DetailsActionButtons,
     }
 })
-export default class SecuritiesDetails extends Vue{
-
-    
+export default class SecuritiesDetails extends Vue{    
     @Inject() private readonly routingService!: RoutingService;
+    @Action(ACTION_ADD_SECURITY) private readonly addSecurity!: ActionFn<PayloadAddSecurity>;
+    @Action(ACTION_ADD_SECURITY_CATEGORY) private readonly addCategory!: ActionFn<PayloadAddSecurityCategory>;
+    @Action(ACTION_ADD_SECURITY_MARKET) private readonly addMarket!: ActionFn<PayloadAddSecurityMarket>;
+    @Action(ACTION_ADD_SECURITY_SEGMENT) private readonly addSegment!: ActionFn<PayloadAddSecuritySegment>;
+    @Action(ACTION_ADD_SECURITY_TERRITORY) private readonly addTerritory!: ActionFn<PayloadAddSecurityTerritory>;
+    @Action(ACTION_ADD_SECURITY_TYPE) private readonly addType!: ActionFn<PayloadAddSecurityType>;
     @Action(ACTION_PUSH_ROUTE) private readonly pushRoute!: ActionFn<PushRoutePayload>;
     @Action(ACTION_UPDATE_SECURITY) private readonly updateSecurity!: ActionFn<PayloadUpdateSecurity>;
     @Action(ACTION_UPDATE_SECURITY_CATEGORY) private readonly updateCategory!: ActionFn<PayloadUpdateSecurityCategory>;
@@ -254,6 +261,7 @@ export default class SecuritiesDetails extends Vue{
                 });
                 switch(this.id) {
                     case 0:
+                        this.addCategory(category);
                         return;
                     default:
                         this.updateCategory(category);
@@ -264,6 +272,7 @@ export default class SecuritiesDetails extends Vue{
                 const market = new SecurityMarketModel(this.id, this.text);
                 switch(this.id){
                     case 0:
+                        this.addMarket(market);
                         return;
                     default:
                         this.updateMarket(market);
@@ -281,6 +290,7 @@ export default class SecuritiesDetails extends Vue{
                 });
                 switch(this.id){
                     case 0:
+                        this.addSecurity(security);
                         return;
                     default:
                         this.updateSecurity(security);
@@ -291,6 +301,7 @@ export default class SecuritiesDetails extends Vue{
                 const segment = new SecuritySegmentModel(this.id, this.text);
                 switch(this.id){
                     case 0:
+                        this.addSegment(segment);
                         return;
                     default:
                         this.updateSegment(segment);
@@ -301,6 +312,7 @@ export default class SecuritiesDetails extends Vue{
                 const territory = new SecurityTerritoryModel(this.id, this.text);
                 switch(this.id) {
                     case 0:
+                        this.addTerritory(territory);
                         return;
                     default:
                         this.updateTerritory(territory);
@@ -312,6 +324,7 @@ export default class SecuritiesDetails extends Vue{
                 const type = new SecurityTypeModel(this.id, this.text);
                 switch(this.id){
                     case 0:
+                        this.addType(type);
                         return;
                     default:
                         this.updateType(type);

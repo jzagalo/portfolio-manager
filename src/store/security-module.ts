@@ -2,6 +2,9 @@ import {
     ACTION_UPDATE_SECURITY, ACTION_UPDATE_SECURITY_CATEGORY,
     ACTION_UPDATE_SECURITY_MARKET, ACTION_UPDATE_SECURITY_SEGMENT,
     ACTION_UPDATE_SECURITY_TERRITORY, ACTION_UPDATE_SECURITY_TYPE,
+    ACTION_ADD_SECURITY, ACTION_ADD_SECURITY_CATEGORY,
+    ACTION_ADD_SECURITY_MARKET,  ACTION_ADD_SECURITY_SEGMENT,
+    ACTION_ADD_SECURITY_TERRITORY,  ACTION_ADD_SECURITY_TYPE,
     STATE_SECURITIES, STATE_SECURITY_CATEGORIES,
     STATE_SECURITY_MARKETS, STATE_SECURITY_SEGMENTS,
     STATE_SECURITY_TERRITORIES, STATE_SECURITY_TYPES,
@@ -14,16 +17,21 @@ import {
     MUTATION_UPDATE_SECURITY, MUTATION_UPDATE_SECURITY_CATEGORY,
     MUTATION_UPDATE_SECURITY_MARKET, MUTATION_UPDATE_SECURITY_SEGMENT,
     MUTATION_UPDATE_SECURITY_TERRITORY,  MUTATION_UPDATE_SECURITY_TYPE,
+    MUTATION_ADD_SECURITY, MUTATION_ADD_SECURITY_MARKET, MUTATION_ADD_SECURITY_CATEGORY,
+    MUTATION_ADD_SECURITY_SEGMENT, MUTATION_ADD_SECURITY_TERRITORY,  MUTATION_ADD_SECURITY_TYPE,
 } from "@/store/store-constants";
 import { Store } from "vuex";
 
 import { StoreActions, StoreActionValidator } from "@/store/store-action-validators";
-import { findAll , findById, undefinedMessage } from "@/store/functions";
+import { findAll , findById, undefinedMessage, add } from "@/store/functions";
 import {
         ISecurityState, ISecurityGetters,
         PayloadUpdateSecurity, PayloadUpdateSecurityCategory,
         PayloadUpdateSecurityMarket, PayloadUpdateSecuritySegment,
         PayloadUpdateSecurityTerritory, PayloadUpdateSecurityType,
+        PayloadAddSecurity, PayloadAddSecurityCategory,
+        PayloadAddSecurityMarket,PayloadAddSecuritySegment,
+        PayloadAddSecurityTerritory, PayloadAddSecurityType,
  } from "@/store/security-types";
 import { IStoreState, StoreGetterTree, StoreActionTree, StoreContext, StoreMutationTree } from "@/store/store-types";
 
@@ -35,6 +43,46 @@ import { initialState as territoryState } from "@/store/security-territory-initi
 import { initialState as typeState } from "@/store/security-type-initial-state";
 
 const storeActionValidator = new StoreActionValidator();
+
+function formatSecurity(payload: PayloadUpdateSecurity | PayloadAddSecurity){
+    payload.symbol = payload.symbol.toUpperCase();
+}
+
+function formatSecurityDescriptor(
+    payload: | PayloadAddSecuritySegment | PayloadAddSecurityTerritory | PayloadAddSecurityType
+             | PayloadUpdateSecuritySegment | PayloadAddSecurityTerritory | PayloadUpdateSecurityType
+){
+    payload.text = payload.text.toLowerCase()
+                    .split(" ")
+                    .map((x) => `${x.charAt(0).toUpperCase}${x.slice(1)}`)
+                    .join(" ");
+}
+
+function formatSecurityMarket(payload: PayloadAddSecurityMarket | PayloadUpdateSecurityMarket){
+    payload.text = payload.text.toUpperCase();
+}
+
+function hydrateSecurity(store: Store<IStoreState>, payload: PayloadUpdateSecurity | PayloadAddSecurity){
+    const category = (store.getters as ISecurityGetters)[GETTER_SECURITY_CATEGORY](payload.categoryId);
+    const market = (store.getters as ISecurityGetters)[GETTER_SECURITY_MARKET](payload.marketId);
+
+    payload.setCategory(category);
+    payload.setMarket(market);
+}
+
+function hydrateSecurityCategory(
+    store: Store<IStoreState>,
+    payload: PayloadAddSecurityCategory | PayloadUpdateSecurityCategory){
+        const segment = (store.getters as ISecurityGetters)[GETTER_SECURITY_SEGMENT](payload.segmentId);
+        const territory = (store.getters as ISecurityGetters)[GETTER_SECURITY_TERRITORY](payload.territoryId);
+        const type = (store.getters as ISecurityGetters)[GETTER_SECURITY_TYPE](payload.typeId);
+
+        payload.setSegment(segment);
+        payload.setSegment(territory);
+        payload.setType(type);
+ }
+
+
 export const securitiesState: ISecurityState = {
     [STATE_SECURITIES]: securityState,
     [STATE_SECURITY_CATEGORIES]: categoryState,
@@ -72,34 +120,36 @@ export const securitiesGetters: StoreGetterTree = {
     [GETTER_SECURITY_CATEGORIES]: (state: IStoreState, getters: ISecurityGetters) => {
         return state[STATE_SECURITY_CATEGORIES].items.map((x) => getters[GETTER_SECURITY_CATEGORY](x.id));
     },
-    [GETTER_SECURITY_CATEGORY]:(state: IStoreState) => {
+    [GETTER_SECURITY_CATEGORY]:(state, getters: ISecurityGetters) => {
         return (id: number) => {
             const category = state[STATE_SECURITY_CATEGORIES].items.find((x) => x.id === id);
-            if (typeof(category) === "undefined") {
-                throw new Error(`Unable to find category with id: ${id}.`);
-            }
-            const segment = state[STATE_SECURITY_SEGMENTS].items.find((x) => x.id === category.segmentId);
-            if (typeof(segment) === "undefined") {
-                throw new Error(`Unable to find segment with id: ${category.segmentId}.`);
-            }
-            const territory = state[STATE_SECURITY_TERRITORIES].items.find((x) => x.id === category.territoryId);
-            if (typeof(territory) === "undefined") {
-                throw new Error(`Unable to find territory with id: ${category.territoryId}.`);
-            }
-            const type = state[STATE_SECURITY_TYPES].items.find((x) => x.id === category.typeId);
-            if (typeof(type) === "undefined") {
-                throw new Error(`Unable to find security type with id: ${category.typeId}.`);
-            }
-            return category
-                .setSegment(segment)
-                .setTerritory(territory)
-                .setType(type);
+
+            storeActionValidator
+                .begin()
+                .while(StoreActions.Getting)
+                .throwIf(category)
+                .isUndefined(undefinedMessage("category", id, state[STATE_SECURITY_CATEGORIES].index));
+
+            const segment = getters[GETTER_SECURITY_SEGMENT](category!.segmentId);
+            const territory = getters[GETTER_SECURITY_TERRITORY](category!.territoryId);
+            const type = getters[GETTER_SECURITY_TYPE](category!.typeId);
+           
+            return category!
+                .setSegment(segment!)
+                .setTerritory(territory!)
+                .setType(type!);
         };
     },
 
-    [GETTER_SECURITY_MARKET]: (state: IStoreState) => {
+    [GETTER_SECURITY_MARKET]: (state) => {
         return (id: number) => {
             const market = findById(state[STATE_SECURITY_MARKETS], id);
+
+            storeActionValidator
+                .begin()
+                .while(StoreActions.Getting)
+                .throwIf(market)
+                .isUndefined(undefinedMessage("market", id, state[STATE_SECURITY_MARKETS].index));
 
             return market;
         }
@@ -165,37 +215,56 @@ export const securitiesGetters: StoreGetterTree = {
 
 export const securitiesActions: StoreActionTree = {
     [ACTION_UPDATE_SECURITY](this: Store<IStoreState>, {commit}: StoreContext, payload: PayloadUpdateSecurity){
-        const category = (this.getters as ISecurityGetters)[GETTER_SECURITY_CATEGORY](payload.categoryId);
-        const market = (this.getters as ISecurityGetters)[GETTER_SECURITY_MARKET](payload.marketId);
-
-        payload.setCategory(category);
-        payload.setMarket(market);
+        hydrateSecurity(this, payload);
+        formatSecurity(payload);        
         commit(MUTATION_UPDATE_SECURITY, payload);
     },
     [ACTION_UPDATE_SECURITY_CATEGORY](this: Store<IStoreState>, { commit } : StoreContext,
         payload: PayloadUpdateSecurityCategory,){
-            const segment = (this.getters as ISecurityGetters)[GETTER_SECURITY_SEGMENT](payload.segmentId);
-            const territory = (this.getters as ISecurityGetters)[GETTER_SECURITY_TERRITORY](payload.territoryId);
-            const type = (this.getters as ISecurityGetters)[GETTER_SECURITY_SEGMENT](payload.typeId);
-
-            payload.setSegment(segment);
-            payload.setSegment(territory);
-            payload.setType(type);
+            hydrateSecurityCategory(this, payload);
             commit(MUTATION_UPDATE_SECURITY_CATEGORY, payload);
     },
     [ACTION_UPDATE_SECURITY_SEGMENT](this: Store<IStoreState>, {commit}: StoreContext, payload: PayloadUpdateSecuritySegment){
+        formatSecurityDescriptor
         commit(MUTATION_UPDATE_SECURITY_SEGMENT, payload);
     },
     [ACTION_UPDATE_SECURITY_TERRITORY]( this: Store<IStoreState>, { commit }: StoreContext, payload: PayloadUpdateSecurityTerritory) {
+        formatSecurityDescriptor
         commit(MUTATION_UPDATE_SECURITY_TERRITORY, payload);
     },
     [ACTION_UPDATE_SECURITY_MARKET](this: Store<IStoreState>, { commit }: StoreContext, payload: PayloadUpdateSecurityMarket){
+        formatSecurityMarket(payload);
         commit(MUTATION_UPDATE_SECURITY_MARKET, payload);
     },
     [ACTION_UPDATE_SECURITY_TYPE](this: Store<IStoreState>, { commit }: StoreContext, payload: PayloadUpdateSecurityType){
-        console.log("Updating Types");
+        formatSecurityDescriptor(payload);
         commit(MUTATION_UPDATE_SECURITY_TYPE, payload);
-    }
+    },
+    [ACTION_ADD_SECURITY](this, {commit}, payload: PayloadAddSecurity){
+        hydrateSecurity(this , payload);
+        formatSecurity(payload);
+        commit(MUTATION_ADD_SECURITY, payload);
+    },
+    [ACTION_ADD_SECURITY_CATEGORY](this, { commit }, payload: PayloadAddSecurityCategory){
+        hydrateSecurityCategory(this, payload);
+        commit(MUTATION_ADD_SECURITY_CATEGORY, payload);
+    },
+    [ACTION_ADD_SECURITY_MARKET](this, {commit}, payload: PayloadAddSecurityMarket){
+        formatSecurityMarket(payload);
+        commit(MUTATION_ADD_SECURITY_SEGMENT, payload);
+    },
+    [ACTION_ADD_SECURITY_SEGMENT](this, { commit }, payload: PayloadAddSecuritySegment) {
+        formatSecurityDescriptor
+        commit(MUTATION_ADD_SECURITY_SEGMENT, payload);
+    },
+    [ACTION_ADD_SECURITY_TERRITORY](this, { commit }, payload: PayloadAddSecurityTerritory) {
+        formatSecurityDescriptor
+        commit(MUTATION_ADD_SECURITY_TERRITORY, payload);
+    },
+    [ACTION_ADD_SECURITY_TYPE](this, { commit }, payload: PayloadAddSecurityType) {
+        formatSecurityDescriptor
+        commit(MUTATION_ADD_SECURITY_TYPE, payload);
+    },
 }
 
 export const securitiesMutations: StoreMutationTree = {
@@ -258,9 +327,9 @@ export const securitiesMutations: StoreMutationTree = {
 
         territory!.text = payload.text;
     },
+
     [MUTATION_UPDATE_SECURITY_TYPE](state: IStoreState, payload: PayloadUpdateSecurityType){
-        const type = findById(state[STATE_SECURITY_TYPES], payload.id);
-        console.log("MutatingType");
+        const type = findById(state[STATE_SECURITY_TYPES], payload.id);      
         storeActionValidator
             .begin()
             .while(StoreActions.Updating)
@@ -268,5 +337,29 @@ export const securitiesMutations: StoreMutationTree = {
             .isUndefined(undefinedMessage("type",payload.id, state[STATE_SECURITY_TYPES].index));
         
         type!.text = payload.text;
-    }
+    },
+
+    [MUTATION_ADD_SECURITY](state, payload: PayloadAddSecurity){
+        add(state[STATE_SECURITIES], payload, (x)=> x.symbol);
+    },
+
+    [MUTATION_ADD_SECURITY_CATEGORY](state, payload: PayloadAddSecurityCategory){
+        add(state[STATE_SECURITY_CATEGORIES], payload, (x) => x.text);
+    },
+
+    [MUTATION_ADD_SECURITY_MARKET](state, payload: PayloadAddSecurityMarket){
+         add(state[STATE_SECURITY_MARKETS], payload, (x) => x.text);
+    },
+
+    [MUTATION_ADD_SECURITY_SEGMENT](state, payload: PayloadAddSecuritySegment){
+        add(state[STATE_SECURITY_SEGMENTS], payload, (x) => x.text);
+    },
+
+    [MUTATION_ADD_SECURITY_TERRITORY](state, payload: PayloadAddSecurityTerritory){
+         add(state[STATE_SECURITY_TERRITORIES], payload, (x) => x.text);
+    },
+
+    [MUTATION_ADD_SECURITY_TYPE](state, payload: PayloadAddSecurityType){
+        add(state[STATE_SECURITY_TYPES], payload, (x) => x.text);
+    },    
 }

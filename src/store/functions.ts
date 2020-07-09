@@ -21,3 +21,26 @@ export function undefinedMessage(entityName: string, id: number, stateIndex: num
          state index of ${stateIndex}`;
 }
 
+export function add<T extends IStateItem>(state: IState<T>, item: T, func: (item: T) => string){
+    if(typeof item === "undefined"){
+        throw new Error(`Cannot add 'undefined' item to the store`);
+    } 
+
+    if(item === null){
+        throw new Error(`Cannot add 'null' item to the store`);
+    }
+
+    item.id = state.index;
+    state.items = sort([...state.items, item], func);
+    state.index += 1;
+}
+
+export function sort<T>(items: T[], func: (item: T) => string){
+    return items.sort((a,b) =>{
+        const aStr = func(a).toUpperCase();
+        const bStr = func(b).toUpperCase();
+        if(aStr < bStr) return -1;
+        if(aStr > bStr) return 1;
+        return 0;
+    });
+}
