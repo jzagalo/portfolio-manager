@@ -32,6 +32,9 @@ export function add<T extends IStateItem>(state: IState<T>, item: T, func: (item
 
     item.id = state.index;
     state.items = sort([...state.items, item], func);
+    console.log(state.items);
+    console.log("divider");
+    console.log(item);
     state.index += 1;
 }
 

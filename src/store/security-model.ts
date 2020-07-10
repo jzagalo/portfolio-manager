@@ -27,6 +27,7 @@ export class SecurityModel {
     }
     public get categoryId() { return this._categoryId; }
     public get id() { return this._id; }
+    public set id(id: number) { this._id = id; }
     public get last() { return this._last; }
     public set last(last: number) { this._last = last; }
     public get market() { return this._market; }

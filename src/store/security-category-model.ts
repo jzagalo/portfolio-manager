@@ -20,6 +20,9 @@ export class SecurityCategoryModel {
 
     
     public get id() { return this._id;  }
+    public set id(id: number) { 
+        this._id = id;  
+    }
     public get segment(){ return this._segment; }
     public get segmentId(){ return this._segmentId }
     public set segmentId(segmentId: number){ 

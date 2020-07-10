@@ -251,7 +251,7 @@ export const securitiesActions: StoreActionTree = {
     },
     [ACTION_ADD_SECURITY_MARKET](this, {commit}, payload: PayloadAddSecurityMarket){
         formatSecurityMarket(payload);
-        commit(MUTATION_ADD_SECURITY_SEGMENT, payload);
+        commit(MUTATION_ADD_SECURITY_MARKET, payload);
     },
     [ACTION_ADD_SECURITY_SEGMENT](this, { commit }, payload: PayloadAddSecuritySegment) {
         formatSecurityDescriptor
