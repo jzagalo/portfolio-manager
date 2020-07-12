@@ -11,7 +11,7 @@ import { Routes, RoutingService, RouteEntry, IRoute, IRouteOptions } from "@/com
 import { AnimationTypes, AnimateOptions, AnimationSubjectOptions} from "@/components/animations/types";
 import AnimatableItem from "@/components/animations/AnimatableItem.vue";
 import { AnimationSubject } from "@/components/animations";
-import { ACTION_PUSH_ROUTE, Action, ActionFn, PushRoutePayload,
+import { ACTION_PUSH_ROUTE, Action, ActionFn, PushRoutePayload,PayloadPopRoute, PayloadPushRoute,
         ACTION_POP_ROUTE, PopRoutePayload } from "@/store";
 
 @Component({
@@ -21,8 +21,8 @@ import { ACTION_PUSH_ROUTE, Action, ActionFn, PushRoutePayload,
 })
 export default class TheRouterOutlet extends Vue{
     @Inject() private readonly routingService!: RoutingService;
-    @Action(ACTION_PUSH_ROUTE) private readonly pushRoute!: ActionFn<PushRoutePayload>;
-    @Action(ACTION_POP_ROUTE) private readonly popRoute!:  ActionFn<PopRoutePayload>;
+    @Action(ACTION_PUSH_ROUTE) private readonly pushRoute!: ActionFn<PayloadPushRoute>;
+    @Action(ACTION_POP_ROUTE) private readonly popRoute!:  ActionFn<PayloadPopRoute>;
     private readonly animationSubject = new AnimationSubject();
     private inAnimation = AnimationTypes.None;
     private isAnimatingIn = false;

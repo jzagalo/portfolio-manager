@@ -32,11 +32,13 @@ export default class Accounts extends Vue {
     @Inject() private readonly routingService!: RoutingService;
 
     private onClick(account: AccountModel){
-        console.log("click");
+        this.routingService.navigateTo( Routes.AccountsDetails, { query : { id : `${account.id}`} });
     }
 
     private onClickCreate(){
-        console.log("click create");
+        this.routingService.navigateTo(
+            Routes.AccountsDetails,
+            { query: { id: "0" } });
     }
 
     private renderAccount(account: AccountModel){

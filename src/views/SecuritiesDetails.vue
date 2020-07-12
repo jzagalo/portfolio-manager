@@ -110,7 +110,7 @@ import {
     PayloadAddSecurity, PayloadAddSecurityCategory,
     PayloadAddSecurityMarket, PayloadAddSecuritySegment,
     PayloadAddSecurityTerritory, PayloadAddSecurityType, 
-    SecurityModel,
+    SecurityModel, PayloadPushRoute,
 } from "@/store";
 import { SecurityDescriptors } from "@/views/types";
 
@@ -129,7 +129,7 @@ export default class SecuritiesDetails extends Vue{
     @Action(ACTION_ADD_SECURITY_SEGMENT) private readonly addSegment!: ActionFn<PayloadAddSecuritySegment>;
     @Action(ACTION_ADD_SECURITY_TERRITORY) private readonly addTerritory!: ActionFn<PayloadAddSecurityTerritory>;
     @Action(ACTION_ADD_SECURITY_TYPE) private readonly addType!: ActionFn<PayloadAddSecurityType>;
-    @Action(ACTION_PUSH_ROUTE) private readonly pushRoute!: ActionFn<PushRoutePayload>;
+    @Action(ACTION_PUSH_ROUTE) private readonly pushRoute!: ActionFn<PayloadPushRoute>;
     @Action(ACTION_UPDATE_SECURITY) private readonly updateSecurity!: ActionFn<PayloadUpdateSecurity>;
     @Action(ACTION_UPDATE_SECURITY_CATEGORY) private readonly updateCategory!: ActionFn<PayloadUpdateSecurityCategory>;
     @Action(ACTION_UPDATE_SECURITY_MARKET) private readonly updateMarket!: ActionFn<PayloadUpdateSecurityMarket>;

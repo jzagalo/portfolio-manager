@@ -51,6 +51,14 @@ const securitiesDetails = new RouteEntry({
     route: Routes.SecuritiesDetails
 });
 
+const accountsDetails = new RouteEntry({
+    component: () => import(/* webpackChunkName: "about" */ "../../views/AccountsDetails.vue"),
+    name: "accounts-details",
+    parent: accounts,
+    path: "/accounts-details",
+    route: Routes.AccountsDetails
+});
+
 export class RoutingService {
     private readonly _navigate = new Subject<IRoute>();
     private readonly _navigate$ = this._navigate.asObservable();
@@ -71,7 +79,8 @@ export class RoutingService {
         [Routes.Home, home],
         [Routes.Accounts, accounts ],
         [Routes.Securities, securities ],
-        [Routes.SecuritiesDetails, securitiesDetails ]
+        [Routes.SecuritiesDetails, securitiesDetails ],
+        [Routes.AccountsDetails, accountsDetails ]
     ]);
 
     private readonly _values = Array.from(this._routes.values());
@@ -180,5 +189,13 @@ export class RoutingService {
             .map((x) => `${x}=${route.query![x]}`)
             .join("&")
         }`: "";
+    }
+
+    public isPreviousRoute = (route: Routes) => {
+        if(this.history.length === 0){
+            return false;
+        }
+
+        return this.history[0].id === route;
     }
 }

@@ -8,10 +8,10 @@ import {initialState} from "@/store/route-initial-state";
 import { IStoreState, StoreActionTree, 
             StoreContext, StoreMutationTree  } from "./store-types";
 
-import { PushRoutePayload } from "./route-types";
+import { PushRoutePayload, PayloadPushRoute } from "./route-types";
 
 export const routeActions: StoreActionTree = {
-    [ACTION_PUSH_ROUTE](this: Store<IStoreState>, {commit}: StoreContext, route: PushRoutePayload){
+    [ACTION_PUSH_ROUTE](this, {commit}, route: PayloadPushRoute){
         commit(MUTATION_PUSH_ROUTE, route);
     },
     [ACTION_POP_ROUTE](this: Store<IStoreState>, { commit }: StoreContext) {
@@ -20,7 +20,7 @@ export const routeActions: StoreActionTree = {
 }
 
 export const routeMutations: StoreMutationTree = {
-    [MUTATION_PUSH_ROUTE](state: IStoreState, payload: PushRoutePayload){
+    [MUTATION_PUSH_ROUTE](state: IStoreState, payload: PayloadPushRoute){
         state[STATE_ROUTES].history = [ payload, ...state[STATE_ROUTES].history ];
     },
     [MUTATION_POP_ROUTE](state: IStoreState){
