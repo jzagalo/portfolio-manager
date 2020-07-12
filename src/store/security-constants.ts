@@ -11,3 +11,4 @@ export const SECURITY_TERRITORY_INTERNATIONAL = "International";
 export const SECURITY_TYPE_EQUITY="Equity";
 export const SECURITY_TYPE_FIXED_INCOME ="Fixed Income";
 export const SECURITY_TYPE_SPECIALITY = "Specialty";
+

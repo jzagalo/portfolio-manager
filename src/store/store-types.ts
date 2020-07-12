@@ -1,12 +1,11 @@
 import { IAccountState } from "@/store/account-types";
 import { ActionContext, ActionTree, MutationTree, GetterTree } from "vuex";
 import { IRouteState } from "./route-types";
-import { STATE_ACCOUNTS, STATE_ROUTES, } from "@/store/store-constants";
+import { STATE_ROUTES } from "@/store/store-constants";
 import { ISecurityState, ISecurityGetters } from "@/store/security-types";
 
 
-export interface IStoreState extends ISecurityState {
-    [STATE_ACCOUNTS]: IAccountState;
+export interface IStoreState extends IAccountState,ISecurityState {    
     [STATE_ROUTES]: IRouteState;
 }
 
@@ -16,6 +15,6 @@ export type StoreContext = ActionContext<IStoreState,IStoreState>;
 export type StoreMutationTree = MutationTree<IStoreState>;
 export type StoreGetterTree = GetterTree<IStoreState, IStoreState>;
 
-export interface IStoreGetters extends ISecurityGetters{
+export interface IStoreGetters extends ISecurityGetters {
 
 }

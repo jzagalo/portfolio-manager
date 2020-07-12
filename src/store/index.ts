@@ -1,5 +1,6 @@
 export * from "./store";
 export * from "./account-types";
+export * from "./account-module";
 export * from "./store-types";
 export * from "./decorators";
 export * from "./store-constants";

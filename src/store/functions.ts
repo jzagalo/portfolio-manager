@@ -32,9 +32,6 @@ export function add<T extends IStateItem>(state: IState<T>, item: T, func: (item
 
     item.id = state.index;
     state.items = sort([...state.items, item], func);
-    console.log(state.items);
-    console.log("divider");
-    console.log(item);
     state.index += 1;
 }
 
@@ -46,4 +43,8 @@ export function sort<T>(items: T[], func: (item: T) => string){
         if(aStr > bStr) return 1;
         return 0;
     });
+}
+
+export function remove<T extends IStateItem>(state: IState<T>, id: number){
+    state.items = state.items.filter((x) => x.id !== id);
 }

@@ -1,14 +1,19 @@
 import {  Store } from "vuex";
 import { ACTION_ADD_ACCOUNT, ACTION_REMOVE_ACCOUNT,
-     MUTATION_ADD_ACCOUNT, MUTATION_REMOVE_ACCOUNT, STATE_ACCOUNTS } 
-            from "./store-constants";
-import { IStoreState } from "./store-types";
+         MUTATION_ADD_ACCOUNT, MUTATION_REMOVE_ACCOUNT,
+         STATE_ACCOUNTS, GETTER_ACCOUNT, GETTER_ACCOUNTS
+        } 
+        from "./store-constants";
+import { IStoreState, StoreGetterTree } from "./store-types";
 import { AccountModel } from "./account-model";
-import { initialState } from "@/store/account-initial-state";
-
+import { initialState as accountState } from "@/store/account-initial-state";
+import { IAccountGetters, IAccountState, PayloadAddAccount, PayloadRemoveAccount } from "@/store/account-types";
 import { AddAccountPayload, RemoveAccountPayload, StoreActionTree, 
         StoreContext, StoreMutationTree } from "@/store";
+import { StoreActions, StoreActionValidator } from "@/store/store-action-validators";
+import { add, findById, remove, undefinedMessage } from "@/store/functions";
 
+const storeActionValidator = new StoreActionValidator();
 
 export const accountActions: StoreActionTree = {
     [ACTION_ADD_ACCOUNT](this: Store<IStoreState>, { commit}: StoreContext, name: AddAccountPayload){
@@ -18,6 +23,25 @@ export const accountActions: StoreActionTree = {
         commit(MUTATION_REMOVE_ACCOUNT, id);
     }
 } 
+
+export const accountGetters: StoreGetterTree = {
+    [GETTER_ACCOUNT]: (state) => {
+        return (id: number) => {
+            const account = findById(state[STATE_ACCOUNTS], id)!;
+
+            storeActionValidator
+                .begin()
+                .while(StoreActions.Getting)
+                .throwIf(account)
+                .isUndefined(undefinedMessage("account", id, state[STATE_ACCOUNTS].index));
+
+            return account;
+        };
+    },
+    [GETTER_ACCOUNTS]: (state, getters: IAccountGetters) => {
+        return state[STATE_ACCOUNTS].items.map((x) => getters[GETTER_ACCOUNT](x.id));
+    },
+}
 
 export const accountMutations: StoreMutationTree = {
     [MUTATION_ADD_ACCOUNT](state: IStoreState, payload: AddAccountPayload){
@@ -36,6 +60,6 @@ export const accountMutations: StoreMutationTree = {
     }
 }
 
-export const accountState = {
-    [STATE_ACCOUNTS]: initialState,
+export const accountsState = {
+    [STATE_ACCOUNTS]: accountState,
 }

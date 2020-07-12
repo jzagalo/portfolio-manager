@@ -10,8 +10,16 @@ export class AccountModel {
     public get id(){
         return this._id;
     }
+
+    public set id(id: number){
+        this.id = id;
+    }
     public get name(){
         return this._name;
+    }
+
+    public set name(name: string){
+        this._name = name;
     }
 
     constructor(config: IAccountConfig){

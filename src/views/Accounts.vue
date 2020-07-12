@@ -1,61 +1,47 @@
 <template lang="pug">
     div.accounts-container 
         h1 Accounts 
-        form
-            div.add
-                input(
-                    ref="add"
-                    type="text"
-                    required=""
-                    placeholder="Name"
-                    v-model="name"
-                )
-                button(
-                    type="submit"
-                    @click="add")
-                    FontAwesomeIcon(icon="plus")
+        
         div.headings
-            label Name
-        div.accounts(v-for="account in accountState.items" )
-            div.name {{ account.name }}
-            button.remove(v-on:click.prevent="remove(account.id)")
-                FontAwesomeIcon(icon="times")
+        ListView(
+            v-bind:items="accounts"
+            v-bind:onClick="onClick"
+            v-bind:onClickCreate="onClickCreate"
+            v-bind:renderFn="renderAccount"
+        )
        
 </template>
 
-<script lang="ts">
-import { Vue, Component } from 'vue-property-decorator';
-import { IAccountState, State, Action, ActionFn, STATE_ACCOUNTS,
-        ACTION_ADD_ACCOUNT, AddAccountPayload,
-        RemoveAccountPayload, ACTION_REMOVE_ACCOUNT } from '../store';
-import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
-import { Refs } from "@/components/animations/types";
+<script lang="tsx">
+import { Vue, Component, Inject } from 'vue-property-decorator';
+import {  GETTER_ACCOUNTS, Getter } from "@/store";
+import { AccountModel } from "@/store/account-model";
+import { IRoute, Routes, RoutingService } from  '@/components/routing';
+//import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
+//import { Refs } from "@/components/animations/types";
+import ListView from "@/components/ListView.vue";
+import { from } from 'rxjs';
 
-@Component
+@Component({
+    components: {
+        ListView,
+    }
+})
 export default class Accounts extends Vue {
-    @State(STATE_ACCOUNTS) private accountState!: IAccountState;
-   
-    public $refs!: Refs<{
-        add: HTMLInputElement;
-    }>
+    @Getter(GETTER_ACCOUNTS) private readonly accounts!: AccountModel[];
+    @Inject() private readonly routingService!: RoutingService;
 
-    @Action(ACTION_ADD_ACCOUNT) private addAccount!: ActionFn<AddAccountPayload>;
-    @Action(ACTION_REMOVE_ACCOUNT) private removeAccount!: ActionFn<RemoveAccountPayload>;
-
-    private name = "";
-
-    private add(){
-        if(this.name === ""){
-            return;
-        }
-        this.addAccount(this.name);
-        this.name = "";
-        this.$refs.add.focus();
+    private onClick(account: AccountModel){
+        console.log("click");
     }
 
-    private remove(id: number){
-       this.removeAccount(id);
+    private onClickCreate(){
+        console.log("click create");
     }
+
+    private renderAccount(account: AccountModel){
+        return (<label>{ account.name }</label>);
+    }    
     
 }
 </script>
