@@ -10,8 +10,8 @@ function createAccount(id: number, config: Omit<IAccountConfig , "id">) {
 
 let index = 1;
 if(process.env.NODE_ENV === "development"){
-   index = createAccount(index, { name : "name-1"});
-   index = createAccount(index, { name: "name-2" });
+   index = createAccount(index, { cash: 5684, name : "name-1"});
+   index = createAccount(index, { cash: 0, name: "name-2" });
 }
 
 export const initialState: IAccountModelState = {

@@ -9,7 +9,8 @@ export default class ListView extends Vue {
     @Prop() private readonly keyFn!: (item: any) => number;
     @Prop() private readonly onClick!: (item: any) => void;
     @Prop() private readonly renderFn!: (item: any) => JSX.Element;
-    @Prop() private readonly onClickCreate!:() => void ;
+    @Prop() private readonly onClickCreate!:() => void;
+    @Prop() private readonly headings?: string[];
 
 
 
@@ -43,7 +44,19 @@ export default class ListView extends Vue {
                             <span>&#43;</span>
                         </a>
                     </li>
-}
+                }
+                {
+                    this.headings && (
+                        <li class="list-item-content">
+                            { this.headings.map((x) => (
+                                <div class="list-item-text list-item-heading">{x}</div>
+                            ))
+                            }
+                            <div style="opacity:0;">&rang; </div>
+                        </li>
+                    )
+                }
+
                 { content }
             </ul>
         );

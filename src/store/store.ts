@@ -9,7 +9,7 @@ import { securitiesState, securitiesActions, securitiesMutations, securitiesGett
 Vue.use(Vuex)
 
 const state: IStoreState = {
-   ...accountsState,
+  ...accountsState,
   ...routeState,
   ...securitiesState
 };

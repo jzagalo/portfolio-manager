@@ -1,12 +1,18 @@
 import {  Store } from "vuex";
 import { ACTION_ADD_ACCOUNT, ACTION_REMOVE_ACCOUNT,
          MUTATION_ADD_ACCOUNT, MUTATION_REMOVE_ACCOUNT,
-         STATE_ACCOUNTS, GETTER_ACCOUNT, GETTER_ACCOUNTS
+         STATE_ACCOUNTS, GETTER_ACCOUNT, GETTER_ACCOUNTS,
+         STATE_ACCOUNTS_DEPOSITS, STATE_ACCOUNTS_SECURITIES,
+         GETTER_ACCOUNT_DEPOSIT, GETTER_ACCOUNT_DEPOSITS,
+         GETTER_ACCOUNT_SECURITIES, GETTER_ACCOUNT_SECURITY,
+         GETTER_SECURITY,
         } 
-        from "./store-constants";
-import { IStoreState, StoreGetterTree } from "./store-types";
+    from "./store-constants";
+import { IStoreState, StoreGetterTree, IStoreGetters, } from "./store-types";
 import { AccountModel } from "./account-model";
 import { initialState as accountState } from "@/store/account-initial-state";
+import { initialState as depositState } from "@/store/account-deposit-initial-state";
+import { initialState as securityState } from "@/store/account-security-initial-state";
 import { IAccountGetters, IAccountState, PayloadAddAccount, PayloadRemoveAccount } from "@/store/account-types";
 import { AddAccountPayload, RemoveAccountPayload, StoreActionTree, 
         StoreContext, StoreMutationTree } from "@/store";
@@ -25,7 +31,7 @@ export const accountActions: StoreActionTree = {
 } 
 
 export const accountGetters: StoreGetterTree = {
-    [GETTER_ACCOUNT]: (state) => {
+    [GETTER_ACCOUNT]: (state, getters: IAccountGetters) => {
         return (id: number) => {
             const account = findById(state[STATE_ACCOUNTS], id)!;
 
@@ -35,17 +41,70 @@ export const accountGetters: StoreGetterTree = {
                 .throwIf(account)
                 .isUndefined(undefinedMessage("account", id, state[STATE_ACCOUNTS].index));
 
+            account.deposits = getters[GETTER_ACCOUNT_DEPOSITS](account.id);
+            account.securities = getters[GETTER_ACCOUNT_SECURITIES](account.id);
+
             return account;
         };
     },
     [GETTER_ACCOUNTS]: (state, getters: IAccountGetters) => {
         return state[STATE_ACCOUNTS].items.map((x) => getters[GETTER_ACCOUNT](x.id));
     },
+    [GETTER_ACCOUNT_DEPOSIT]:(storeState, getters: IAccountGetters) => {
+        return(id: number) => {
+            const deposit = findById(storeState[STATE_ACCOUNTS_DEPOSITS], id)!;
+
+            storeActionValidator
+                .begin()
+                .while(StoreActions.Getting)
+                .throwIf(deposit)
+                .isUndefined(undefinedMessage("deposit", id,
+                storeState[STATE_ACCOUNTS_DEPOSITS].index));
+            deposit.account = getters[GETTER_ACCOUNT](deposit.accountId);
+
+            return deposit;
+        }
+    },
+    [GETTER_ACCOUNT_DEPOSITS]: (storeState) => {
+        return(accountId: number) => {
+            return storeState[STATE_ACCOUNTS_DEPOSITS].items.filter((x)  => x.accountId === accountId);
+        }
+    },
+    [GETTER_ACCOUNT_SECURITIES]: (storeState, getters: IStoreGetters) => {
+        return (accountId: number) => {
+            const accountSecurities = storeState[STATE_ACCOUNTS_SECURITIES].items.filter(
+                (x) => x.accountId === accountId,
+            );
+
+            accountSecurities.forEach((x) => {
+                x.security = getters[GETTER_SECURITY](x.securityId);
+            });
+
+            return accountSecurities;
+        }
+    },
+    [GETTER_ACCOUNT_SECURITY]: (storeState, getters: IStoreGetters) => {
+        return (id: number) => {
+            const accountSecurity = findById(storeState[STATE_ACCOUNTS_SECURITIES],id)!;
+
+            storeActionValidator
+                .begin()
+                .while(StoreActions.Getting)
+                .throwIf(accountSecurity)
+                .isUndefined(undefinedMessage("accountSecurity", id,storeState[STATE_ACCOUNTS_SECURITIES].index));
+
+            accountSecurity.account = getters[GETTER_ACCOUNT](accountSecurity.accountId);
+            accountSecurity.security = getters[GETTER_SECURITY](accountSecurity.securityId);
+
+            return accountSecurity;
+        }
+    },
+    
 }
 
 export const accountMutations: StoreMutationTree = {
     [MUTATION_ADD_ACCOUNT](state: IStoreState, payload: AddAccountPayload){
-        const account = new AccountModel({ id: state[STATE_ACCOUNTS].index, name: payload });
+        const account = new AccountModel({ id: state[STATE_ACCOUNTS].index, name: payload , cash: 0 });
         state[STATE_ACCOUNTS].items = [...state[STATE_ACCOUNTS].items, account].sort((a,b) =>{
             const aName = a.name.toUpperCase();
             const bName = b.name.toUpperCase();
@@ -62,4 +121,6 @@ export const accountMutations: StoreMutationTree = {
 
 export const accountsState = {
     [STATE_ACCOUNTS]: accountState,
+    [STATE_ACCOUNTS_DEPOSITS]: depositState,
+    [STATE_ACCOUNTS_SECURITIES]: securityState,
 }

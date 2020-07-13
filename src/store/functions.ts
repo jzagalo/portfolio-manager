@@ -48,3 +48,15 @@ export function sort<T>(items: T[], func: (item: T) => string){
 export function remove<T extends IStateItem>(state: IState<T>, id: number){
     state.items = state.items.filter((x) => x.id !== id);
 }
+
+export function currencyFormatter(
+    minimumFractionDigits: number = 2,
+    maximumFractionDigits: number = 2
+){
+    return new Intl.NumberFormat("en-US",{
+        currency: "USD",
+        maximumFractionDigits,
+        minimumFractionDigits,
+        style: "currency",
+    })
+}

@@ -1,6 +1,7 @@
 <template lang="pug">
+div
     div
-        from
+        form
             div.inputs
                 h1 Account Details
                 label Name
@@ -8,15 +9,53 @@
                     type="text"
                     v-model="name"
                 )
+                label Cash
+                input(
+                    type="number"
+                    v-model="cash"
+                )
             DetailsActionButtons(v-bind:save="save")
+    div(class="account-stats")
+        div
+            label value
+            div {{ currency.format(value) }}
+        div
+            label Total deposits
+            div {{ currency.format(profit) }}
+        div
+            label Profit
+            div {{ currency.format(profit) }}
+        div
+            label ROI
+            div {{ roi }}
+    TabContainer(v-bind:tabs="tabs")
+        ListView(
+            v-bind:headings="accountSecurityHeadings"
+            v-bind:items="accountSecurities"
+            v-bind:onClick="handleClickAccountSecurity"
+            v-bind:onClickCreate="handleClickCreateAccountSecurity"
+            v-bind:renderFn="renderSecurity"
+        )
+        ListView(
+            v-bind:headings="accountDepositHeadings"
+            v-bind:items="accountDeposits"
+            v-bind:onClick="handleClickAccountDeposit"
+            v-bind:onClickCreate="handleClickCreateAccountDeposit"
+            v-bind:renderFn="renderDeposit"
+        )
 </template>
 
-<script lang="ts">
+<script lang="tsx">
 import DetailsActionButtons from "@/components/DetailsActionButtons.vue";
 import { Vue, Component, Inject } from 'vue-property-decorator';
 import { Routes, RoutingService } from "@/components/routing";
 import { ACTION_PUSH_ROUTE, Action, ActionFn, GETTER_ACCOUNT, Getter,
-    GetterAccount, PayloadPushRoute } from "@/store";
+        GetterAccount, PayloadPushRoute, AccountDepositModel,
+        AccountSecurityModel
+    } from "@/store";
+import { currencyFormatter } from "@/store/functions";
+import ListView from "@/components/ListView.vue";
+import TabContainer from "@/components/tabs/TabContainer.vue";
 
 interface IQuery {
     id: string;
@@ -24,16 +63,42 @@ interface IQuery {
 
 @Component({
     components: {
-        DetailsActionButtons
+        DetailsActionButtons,
+        ListView,
+        TabContainer,
     }
 })
 export default class AccountsDetails extends Vue {
     @Action(ACTION_PUSH_ROUTE) private readonly pushRoute!: ActionFn<PayloadPushRoute>;
     @Getter(GETTER_ACCOUNT) private readonly getterAccount!: GetterAccount;
     @Inject() private readonly routingService!: RoutingService;
+    private readonly currency = currencyFormatter();
+
+    private accountDeposits: AccountDepositModel[] = [];
+    private accountSecurities: AccountSecurityModel[]= [];
+    private cash = 0;
+    private depositTotal = 0;
+    private readonly accountSecurityHeadings = ["Symbol", "Value", "Shares"];
+    private readonly accountDepositHeadings = ["Date", "Amount"];
+    private readonly tabs = ["Securities", "Deposits"];
+
 
     private id = 0;
     private name = "";
+
+    public get value(){
+        return this.accountSecurities.reduce((prev, cur) => prev + cur.value,0);
+    }
+
+    public get roi(){
+        const roi = this.depositTotal === 0 ? 0: (this.profit/ this.depositTotal) * 100;
+        return `${roi.toFixed(2)}`;
+    }
+
+    public get profit() {
+        return this.value - (this.depositTotal - this.cash);
+    }
+    
 
     private created(){
         if(this.routingService.isPreviousRoute(Routes.Accounts) === false){
@@ -51,10 +116,51 @@ export default class AccountsDetails extends Vue {
     private load(){
         const account = this.getterAccount(this.id);
         this.name = account.name;
+        this.accountDeposits = account.deposits;
+        this.cash = account.cash;
+        this.accountSecurities = account.securities;
+        this.depositTotal = account.deposits
+            .reduce((prev, cur) => prev + cur.amount, 0);
+    }
+
+    private handleClickAccountDeposit(deposit: AccountDepositModel){
+        console.log(deposit);
+    }
+
+    private handleClickAccountSecurity(accountSecurity: AccountSecurityModel){
+        console.log(accountSecurity);
+    }
+
+    private handleClickCreateAccountDeposit(){
+        console.log("handleClickCreateAccountDeposit");
+    }
+
+    private handleClickCreateAccountSecurity(){
+        console.log("handleClickCreateAccountSecurity");
+    }
+
+    private renderDeposit(accountDeposit: AccountDepositModel){
+        return (
+            <div class="account-deposit">
+                <span> {accountDeposit.date.toDateString()} </span>
+                <span> {this.currency.format(accountDeposit.amount)}</span>
+            </div>
+        );
+    }
+
+    private renderSecurity(accountSecurity: AccountSecurityModel){
+        return (
+            <div class="account-security">
+                <span>{ accountSecurity.security.symbol} </span>
+                <span> { this.currency.format(accountSecurity.value)} </span>
+                <span> { accountSecurity.shares} </span>
+
+            </div>
+        );
     }
 
     private save(){
-        console.log("save");
+        console.log("savetgffgfgf");
     }
     
 }
@@ -63,4 +169,18 @@ export default class AccountsDetails extends Vue {
 <style lang="sass" scoped>
     .inputs
         padding: 0 0.25rem
+    .account-stats, .account-security 
+        display: flex
+        flex-wrap: wrap
+        border: 1px solid #eee
+        padding-top: 0.75rem
+
+        > *
+            flex: 1
+            min-width: 150px
+            text-align: center
+            margin-bottom: 0.75rem
+    .list-item-heading
+        font-weight: 600
+
 </style>
