@@ -3,7 +3,7 @@
         button.red(
             type="button"
             v-on:click.prevent="cancel"
-        ) Cancel       
+        ) Cancel
         button.green(
             type="submit"
             v-on:click.prevent="saveInternal"
@@ -19,7 +19,6 @@ export default class DetailsActionButtons extends Vue{
     @Prop() private readonly save!: () => void;
 
     private mounted(){
-        console.log(this);
     }
 
     private cancel(){
@@ -34,13 +33,11 @@ export default class DetailsActionButtons extends Vue{
 </script>
 
 <style lang="sass" scoped>
-
-
 .buttons
     display: flex
 
     button
-        flex: 1        
+        flex: 1
         padding: 10px
         background: green
         outline: 0
@@ -51,12 +48,7 @@ export default class DetailsActionButtons extends Vue{
         font-size: 15px
         margin-bottom: 15px
 
-    
+
         &:first-child
             background: red;
-
-
-
-
-
 </style>

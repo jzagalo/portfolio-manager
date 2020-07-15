@@ -109,7 +109,7 @@ import {
     PayloadUpdateSecurityTerritory, PayloadUpdateSecurityType,
     PayloadAddSecurity, PayloadAddSecurityCategory,
     PayloadAddSecurityMarket, PayloadAddSecuritySegment,
-    PayloadAddSecurityTerritory, PayloadAddSecurityType, 
+    PayloadAddSecurityTerritory, PayloadAddSecurityType,
     SecurityModel, PayloadPushRoute,
 } from "@/store";
 import { SecurityDescriptors } from "@/views/types";
@@ -117,11 +117,11 @@ import { SecurityDescriptors } from "@/views/types";
 type ActionUpdateTerritory = ActionFn<PayloadUpdateSecurityTerritory>;
 
 @Component({
-    components:{ 
+    components:{
         DetailsActionButtons,
     }
 })
-export default class SecuritiesDetails extends Vue{    
+export default class SecuritiesDetails extends Vue{
     @Inject() private readonly routingService!: RoutingService;
     @Action(ACTION_ADD_SECURITY) private readonly addSecurity!: ActionFn<PayloadAddSecurity>;
     @Action(ACTION_ADD_SECURITY_CATEGORY) private readonly addCategory!: ActionFn<PayloadAddSecurityCategory>;
@@ -266,7 +266,7 @@ export default class SecuritiesDetails extends Vue{
                     default:
                         this.updateCategory(category);
                         return;
-                }              
+                }
             }
             case SecurityDescriptors.Markets: {
                 const market = new SecurityMarketModel(this.id, this.text);
@@ -277,7 +277,7 @@ export default class SecuritiesDetails extends Vue{
                     default:
                         this.updateMarket(market);
                         return;
-                }                
+                }
             }
             case SecurityDescriptors.Securities:{
                 const security = new SecurityModel({
@@ -335,3 +335,23 @@ export default class SecuritiesDetails extends Vue{
     }
 }
 </script>
+
+<style lang="sass" scoped>
+.security-details
+    display: flex
+    margin-right: 0.125rem
+    padding: 0 0.25rem
+    display: flex
+    justify-content: center
+    align-items: stretch
+
+    label
+        display: block
+        text-align: left
+
+    input, select
+        padding: 7px 3px
+        margin: 5px 0 15px 0
+        font-size: 14px
+        width: 100%
+</style>

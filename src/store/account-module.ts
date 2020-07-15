@@ -9,18 +9,18 @@ import { ACTION_ADD_ACCOUNT, ACTION_REMOVE_ACCOUNT,
          GETTER_ACCOUNT_DEPOSIT, GETTER_ACCOUNT_DEPOSITS,
          GETTER_ACCOUNT_SECURITIES, GETTER_ACCOUNT_SECURITY,
          GETTER_SECURITY,
-        } 
+        }
     from "./store-constants";
 import { IStoreState, StoreGetterTree, IStoreGetters, } from "./store-types";
 import { AccountModel } from "./account-model";
 import { initialState as accountState } from "@/store/account-initial-state";
 import { initialState as depositState } from "@/store/account-deposit-initial-state";
 import { initialState as securityState } from "@/store/account-security-initial-state";
-import { IAccountGetters, IAccountState, 
+import { IAccountGetters, IAccountState,
         PayloadAddAccount, PayloadRemoveAccount,
         PayloadAddAccountDeposit, PayloadUpdateAccountDeposit,
          } from "@/store/account-types";
-import { AddAccountPayload, RemoveAccountPayload, StoreActionTree, 
+import { AddAccountPayload, RemoveAccountPayload, StoreActionTree,
         StoreContext, StoreMutationTree } from "@/store";
 import { StoreActions, StoreActionValidator } from "@/store/store-action-validators";
 import { add, findById, remove, undefinedMessage, sort } from "@/store/functions";
@@ -36,16 +36,19 @@ export const accountActions: StoreActionTree = {
     },
     [ACTION_ADD_ACCOUNT_DEPOSIT](this, { commit }, payload: PayloadAddAccountDeposit) {
         commit(MUTATION_ADD_ACCOUNT_DEPOSIT, payload);
-    },  
+    },
     [ACTION_UPDATE_ACCOUNT_DEPOSIT](this, { commit }, payload: PayloadUpdateAccountDeposit) {
         commit(MUTATION_UPDATE_ACCOUNT_DEPOSIT, payload);
     },
-} 
+}
 
 export const accountGetters: StoreGetterTree = {
     [GETTER_ACCOUNT]: (state, getters: IAccountGetters) => {
         return (id: number) => {
+            console.log(id);
             const account = findById(state[STATE_ACCOUNTS], id)!;
+       
+            console.log("TTT");
 
             storeActionValidator
                 .begin()
@@ -111,7 +114,7 @@ export const accountGetters: StoreGetterTree = {
             return accountSecurity;
         }
     },
-    
+
 }
 
 export const accountMutations: StoreMutationTree = {

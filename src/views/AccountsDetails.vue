@@ -97,14 +97,15 @@ export default class AccountsDetails extends Vue {
 
     public get profit() {
         return this.value - (this.depositTotal - this.cash);
-    }    
+    }
 
     private created(){
+        this.id = this.routingService.queryParam<IQuery, number>((x) => x.id, parseInt);
         if(this.routingService.isPreviousRoute(Routes.Accounts) === false){
             this.pushRoute(this.routingService.createRoute(Routes.Accounts));
         }
 
-        this.id = this.routingService.queryParam<IQuery, number>((x) => x.id, parseInt);
+
 
         if(this.id <= 0){
             return;
@@ -129,7 +130,9 @@ export default class AccountsDetails extends Vue {
     }
 
     private handleClickAccountSecurity(accountSecurity: AccountSecurityModel){
-        console.log(accountSecurity);
+        this.routingService.navigateTo(Routes.AccountsSecurity, {
+            query: { accountId: `${this.id}`, id: `${accountSecurity.id}` },
+        });
     }
 
     private handleClickCreateAccountDeposit() {
@@ -139,7 +142,9 @@ export default class AccountsDetails extends Vue {
     }
 
     private handleClickCreateAccountSecurity(){
-        console.log("handleClickCreateAccountSecurity");
+         this.routingService.navigateTo(Routes.AccountsSecurity, {
+            query: { accountId: `${this.id}`, id: "0" },
+        });
     }
 
     private renderDeposit(accountDeposit: AccountDepositModel){
@@ -165,7 +170,7 @@ export default class AccountsDetails extends Vue {
     private save(){
         console.log("savetgffgfgf");
     }
-    
+
 }
 </script>
 
@@ -184,9 +189,9 @@ export default class AccountsDetails extends Vue {
             padding: 7px 3px
             margin: 5px 0 15px 0
             font-size: 14px
-            
 
-    .account-stats, .account-security 
+
+    .account-stats, .account-security
         display: flex
         flex-wrap: wrap
         border: 1px solid #eee

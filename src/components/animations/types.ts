@@ -29,7 +29,7 @@ export enum AnimationStages {
     BeforeApplyPre,
     BeforeRemovePost,
     BeforeRemovePre,
-    Complete,    
+    Complete,
 }
 
 export type Props<T extends object> = Vue["$props"] & T;
@@ -42,6 +42,7 @@ export enum Routes {
     SecuritiesDetails,
     AccountsDetails,
     AccountsDeposit,
+    AccountsSecurity,
 }
 
 export type Refs<T extends object> = Vue["$refs"] & T;

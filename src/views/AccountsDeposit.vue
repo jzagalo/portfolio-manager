@@ -31,7 +31,7 @@ form
                 v-model="date"
             )
     DetailsActionButtons(v-bind:save="save")/
-</template> 
+</template>
 
 <script lang="tsx">
 import moment from "moment";
@@ -41,15 +41,16 @@ import { Vue, Component, Inject} from 'vue-property-decorator';
 import { Routes, RoutingService } from "@/components/routing";
 import { AccountDepositModel, Action, ActionFn, AccountModel,
         ACTION_PUSH_ROUTE, Getter, GETTER_ACCOUNT_DEPOSIT,
-        GETTER_ACCOUNTS,
+        GETTER_ACCOUNTS, GETTER_ACCOUNT, GetterAccount,
         ACTION_ADD_ACCOUNT_DEPOSIT, ACTION_UPDATE_ACCOUNT_DEPOSIT,
         PayloadAddAccountDeposit, PayloadUpdateAccountDeposit,
-        GetterAccountDeposit, PayloadPushRoute 
+        GetterAccountDeposit, PayloadPushRoute
     } from "@/store";
 
 
 interface IQuery {
     id: string;
+    accountId: string;
 }
 
 @Component({
@@ -62,9 +63,10 @@ export default class AccountsDeposit extends Vue {
     @Action(ACTION_ADD_ACCOUNT_DEPOSIT) private readonly addDeposit!: ActionFn<PayloadAddAccountDeposit>;
     @Action(ACTION_UPDATE_ACCOUNT_DEPOSIT) private readonly updateDeposit!: ActionFn<PayloadUpdateAccountDeposit>;
     @Getter(GETTER_ACCOUNT_DEPOSIT) private readonly getterDeposit!: GetterAccountDeposit;
-    
+
     @Inject() private readonly routingService!: RoutingService;
     @Getter(GETTER_ACCOUNTS) private readonly accounts!: AccountModel[];
+    @Getter(GETTER_ACCOUNT) private readonly getterAccount!: GetterAccount;
 
     private accountId = 0;
     private accountName = "";
@@ -75,25 +77,40 @@ export default class AccountsDeposit extends Vue {
 
     private created(){
         this.id = this.routingService.queryParam<IQuery, number>((x) => x.id, parseInt);
+        this.accountId = this.routingService.queryParam<IQuery, number>((x) => x.accountId, parseInt);
+        const account = this.getterAccount(this.accountId);
+        this.accountName = account.name;
+
+        if(this.routingService.isPreviousRoute(Routes.AccountsDetails) === false) {
+            this.pushRoute(
+                this.routingService.createRoute(Routes.AccountsDetails, {
+                    query: { id: `${this.accountId}`},
+                }),
+            );
+        }
 
         if(this.id <= 0){
             return;
         }
 
-        const deposit = this.getterDeposit(this.id);
-        this.load(deposit);
+
+        this.load();
     }
 
-    private load(deposit : AccountDepositModel){
+    private load(){
+        const deposit = this.getterDeposit(this.id);
+        this.amount = deposit.amount;
+        this.date = moment(deposit.date).format("YYYY-MM-DD");
         this.accountId = deposit.accountId;
         this.accountName = deposit.account.name;
-        if(this.routingService.isPreviousRoute(Routes.AccountsDetails) === false){
+
+        if(this.routingService.isPreviousRoute(Routes.AccountsDetails) === false) {
             this.pushRoute(
                 this.routingService.createRoute(Routes.AccountsDetails,{
                     query: { id: `${this.accountId}`}
                 }),
             );
-        }      
+        }
     }
 
     private save(){
@@ -110,7 +127,7 @@ export default class AccountsDeposit extends Vue {
              return;
            default:
              this.updateDeposit(deposit);
-             return;  
+             return;
        }
     }
 
@@ -137,6 +154,6 @@ export default class AccountsDeposit extends Vue {
         margin: 5px 0 15px 0
         font-size: 14px
     select
-        width: 100%	
-    
+        width: 100%
+
 </style>

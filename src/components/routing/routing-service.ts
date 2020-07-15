@@ -67,6 +67,15 @@ const accountsDeposit = new RouteEntry({
     route: Routes.AccountsDeposit,
 });
 
+const accountsSecurity = new RouteEntry({
+    component: () => import(/* webpackChunkName: "accounts-deposit" */ "../../views/AccountsSecurity.vue"),
+    name: "accounts-security",
+    parent: accountsDetails,
+    path: "/accounts-security",
+    route: Routes.AccountsSecurity,
+});
+
+
 
 
 export class RoutingService {
@@ -92,6 +101,7 @@ export class RoutingService {
         [Routes.SecuritiesDetails, securitiesDetails ],
         [Routes.AccountsDetails, accountsDetails ],
         [Routes.AccountsDeposit, accountsDeposit ],
+        [Routes.AccountsSecurity, accountsSecurity ],
     ]);
 
     private readonly _values = Array.from(this._routes.values());
@@ -106,7 +116,6 @@ export class RoutingService {
     }
 
     constructor(private readonly _store: Store<IStoreState>){
-        console.log(this);
     }
 
     public back = () =>{
@@ -127,9 +136,8 @@ export class RoutingService {
 
     public queryParam<Q, R extends string | number=string>(
         func: (q: Q) => string, transform: (x: string) => R = (x) => x as R){
-
         const param = func((this._router.currentRoute.query as unknown) as Q);
-        console.log(param);
+
         return transform(param);
     }
 
@@ -194,7 +202,6 @@ export class RoutingService {
     }
 
     public queryString = (route: IRoute) => {
-        console.log("rs "+ route);
         return typeof(route.query) !== "undefined" ?
         `?${Object.keys(route.query)
             .map((x) => `${x}=${route.query![x]}`)
