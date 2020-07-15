@@ -45,10 +45,7 @@ export const accountActions: StoreActionTree = {
 export const accountGetters: StoreGetterTree = {
     [GETTER_ACCOUNT]: (state, getters: IAccountGetters) => {
         return (id: number) => {
-            console.log(id);
             const account = findById(state[STATE_ACCOUNTS], id)!;
-       
-            console.log("TTT");
 
             storeActionValidator
                 .begin()

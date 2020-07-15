@@ -2,6 +2,9 @@
 form
     div.inputs
         label Security
+        AccountTransfer(
+            v-bind:id="accountId"
+            v-on:change="accountChange")/
         select(v-model="securityId")
             option(
                 v-for="security in securities"
@@ -19,14 +22,15 @@ form
 <script lang="ts">
 import { Vue, Component, Inject } from 'vue-property-decorator';
 import DetailsActionButtons from '@/components/DetailsActionButtons.vue';
+import AccountTransfer from "@/components/AccountTransfer.vue";
 import { RoutingService, Routes } from '@/components/routing'
 
 import {    Action, ActionFn, ACTION_PUSH_ROUTE, Getter,
-            GETTER_ACCOUNT, GETTER_ACCOUNT_SECURITY, GETTER_SECURITIES,
-            GetterAccount, GetterAccountSecurity, PayloadPushRoute,
+            GETTER_ACCOUNT_SECURITY, GETTER_SECURITIES,
+            GetterAccountSecurity, PayloadPushRoute,
             SecurityModel,
         } from '@/store';
-        
+
 interface IQuery {
     accountId: string;
     id: string;
@@ -35,27 +39,27 @@ interface IQuery {
 @Component({
     components: {
         DetailsActionButtons,
+        AccountTransfer,
     }
 })
 export default class AccountsSecurity extends Vue {
     @Action(ACTION_PUSH_ROUTE) private readonly pushRoute!: ActionFn<PayloadPushRoute>;
-    @Getter(GETTER_ACCOUNT) private readonly getterAccount!: GetterAccount;
     @Getter(GETTER_ACCOUNT_SECURITY) private getterAccountSecurity!: GetterAccountSecurity;
     @Getter(GETTER_SECURITIES) private readonly securities!: SecurityModel[];
     @Inject() private readonly routingService!: RoutingService;
 
     private accountId = 0;
-    private accountName = "";
     private id = 0;
     private securityId = 0;
     private shares = 0;
 
+    private accountChange(id: number) {
+        this.accountId = id;
+    }
+
     private created(){
         this.id = this.routingService.queryParam<IQuery, number>((x) => x.id, parseInt);
         this.accountId = this.routingService.queryParam<IQuery, number>((x) => x.accountId, parseInt);
-
-        const account = this.getterAccount(this.accountId);
-        this.accountName = account.name;
 
         if(this.routingService.isPreviousRoute(Routes.AccountsDetails) === false){
             this.pushRoute(
@@ -80,6 +84,7 @@ export default class AccountsSecurity extends Vue {
 
     private save (){
         console.log("save");
+        console.log(this.accountId);
     }
 
 }
