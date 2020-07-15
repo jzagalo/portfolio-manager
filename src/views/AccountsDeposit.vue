@@ -105,7 +105,7 @@ export default class AccountsDeposit extends Vue {
            date: moment(this.date).toDate(),
            id: this.id,
        });
-
+       
        switch(this.id){
            case 0:
              this.addDeposit(deposit);

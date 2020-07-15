@@ -1,6 +1,9 @@
 import {  Store } from "vuex";
 import moment from "moment";
 import { ACTION_ADD_ACCOUNT, ACTION_REMOVE_ACCOUNT,
+         ACTION_ADD_ACCOUNT_SECURITY, ACTION_UPDATE_ACCOUNT_SECURITY,
+         ACTION_REMOVE_ACCOUNT_SECURITY, MUTATION_REMOVE_ACCOUNT_SECURITY,
+         MUTATION_ADD_ACCOUNT_SECURITY, MUTATION_UPDATE_ACCOUNT_SECURITY,
          ACTION_ADD_ACCOUNT_DEPOSIT, ACTION_UPDATE_ACCOUNT_DEPOSIT,
          MUTATION_ADD_ACCOUNT_DEPOSIT, MUTATION_UPDATE_ACCOUNT_DEPOSIT,
          MUTATION_ADD_ACCOUNT, MUTATION_REMOVE_ACCOUNT,
@@ -17,7 +20,8 @@ import { initialState as accountState } from "@/store/account-initial-state";
 import { initialState as depositState } from "@/store/account-deposit-initial-state";
 import { initialState as securityState } from "@/store/account-security-initial-state";
 import { IAccountGetters, IAccountState,
-        PayloadAddAccount, PayloadRemoveAccount,
+        PayloadAddAccount, PayloadRemoveAccount, PayloadRemoveAccountSecurity,
+        PayloadAddAccountSecurity, PayloadUpdateAccountSecurity,
         PayloadAddAccountDeposit, PayloadUpdateAccountDeposit,
          } from "@/store/account-types";
 import { AddAccountPayload, RemoveAccountPayload, StoreActionTree,
@@ -39,6 +43,31 @@ export const accountActions: StoreActionTree = {
     },
     [ACTION_UPDATE_ACCOUNT_DEPOSIT](this, { commit }, payload: PayloadUpdateAccountDeposit) {
         commit(MUTATION_UPDATE_ACCOUNT_DEPOSIT, payload);
+    },
+    [ACTION_ADD_ACCOUNT_SECURITY](this, { commit }, payload: PayloadAddAccountSecurity) {
+        commit(MUTATION_ADD_ACCOUNT_SECURITY, payload);
+    },
+    [ACTION_UPDATE_ACCOUNT_SECURITY](this, { commit }, payload: PayloadUpdateAccountSecurity) {
+        console.log("PAyload");
+        console.log(payload);
+        commit(MUTATION_UPDATE_ACCOUNT_SECURITY, payload);
+    },
+    [ACTION_ADD_ACCOUNT_SECURITY](this, { commit }, payload: PayloadAddAccountSecurity) {
+        const state = this.state[STATE_ACCOUNTS_SECURITIES];
+        const accountSecurity = state.items.find(
+            (x) => x.accountId === payload.accountId && x.securityId === payload.securityId,
+        );
+
+        if (typeof accountSecurity === "undefined") {
+            commit(MUTATION_ADD_ACCOUNT_SECURITY, payload);
+        } else {
+            payload.id = accountSecurity.id;
+            payload.shares += accountSecurity.shares;
+            commit(MUTATION_UPDATE_ACCOUNT_SECURITY, payload);
+        }
+    },
+    [ACTION_REMOVE_ACCOUNT_SECURITY](this, { commit }, payload: PayloadRemoveAccountSecurity) {
+        commit(MUTATION_REMOVE_ACCOUNT_SECURITY, payload);
     },
 }
 
@@ -92,7 +121,9 @@ export const accountGetters: StoreGetterTree = {
                 x.security = getters[GETTER_SECURITY](x.securityId);
             });
 
-            return accountSecurities;
+            const sorted = sort(accountSecurities, (x) => x.security.symbol);
+
+            return sorted;
         }
     },
     [GETTER_ACCOUNT_SECURITY]: (storeState, getters: IStoreGetters) => {
@@ -147,6 +178,30 @@ export const accountMutations: StoreMutationTree = {
         deposit.date = payload.date;
 
         state.items = sort(state.items, (x) => moment(x.date).valueOf(), { descending: true });
+    },
+    [MUTATION_ADD_ACCOUNT_SECURITY](storeState, payload: PayloadAddAccountSecurity) {
+        add(storeState[STATE_ACCOUNTS_SECURITIES], payload);
+    },
+    [MUTATION_UPDATE_ACCOUNT_SECURITY](storeState, payload: PayloadUpdateAccountSecurity) {
+        const state = storeState[STATE_ACCOUNTS_SECURITIES];
+        const security = findById(state, payload.id)!;
+
+        storeActionValidator
+            .begin()
+            .while(StoreActions.Updating)
+            .throwIf(security)
+            .isUndefined(undefinedMessage("security", payload.id, state.index));
+
+        security.accountId = payload.accountId;
+        security.securityId = payload.securityId;
+        security.shares = payload.shares;
+
+        state.items = [...state.items];
+    },
+    [MUTATION_REMOVE_ACCOUNT_SECURITY](storeState, payload: PayloadRemoveAccountSecurity) {
+        storeState[STATE_ACCOUNTS_SECURITIES].items = storeState[STATE_ACCOUNTS_SECURITIES].items.filter(
+            (x) => x.id !== payload.id,
+        );
     },
 }
 

@@ -26,6 +26,9 @@ import AccountTransfer from "@/components/AccountTransfer.vue";
 import { RoutingService, Routes } from '@/components/routing'
 
 import {    Action, ActionFn, ACTION_PUSH_ROUTE, Getter,
+            AccountSecurityModel, ACTION_ADD_ACCOUNT_SECURITY,
+            ACTION_UPDATE_ACCOUNT_SECURITY, PayloadAddAccountSecurity,
+            PayloadUpdateAccountSecurity,
             GETTER_ACCOUNT_SECURITY, GETTER_SECURITIES,
             GetterAccountSecurity, PayloadPushRoute,
             SecurityModel,
@@ -44,6 +47,8 @@ interface IQuery {
 })
 export default class AccountsSecurity extends Vue {
     @Action(ACTION_PUSH_ROUTE) private readonly pushRoute!: ActionFn<PayloadPushRoute>;
+    @Action(ACTION_ADD_ACCOUNT_SECURITY) private readonly addSecurity!: ActionFn<PayloadAddAccountSecurity>;
+    @Action(ACTION_UPDATE_ACCOUNT_SECURITY) private readonly updateSecurity!: ActionFn<PayloadUpdateAccountSecurity>;
     @Getter(GETTER_ACCOUNT_SECURITY) private getterAccountSecurity!: GetterAccountSecurity;
     @Getter(GETTER_SECURITIES) private readonly securities!: SecurityModel[];
     @Inject() private readonly routingService!: RoutingService;
@@ -61,7 +66,7 @@ export default class AccountsSecurity extends Vue {
         this.id = this.routingService.queryParam<IQuery, number>((x) => x.id, parseInt);
         this.accountId = this.routingService.queryParam<IQuery, number>((x) => x.accountId, parseInt);
 
-        if(this.routingService.isPreviousRoute(Routes.AccountsDetails) === false){
+        if(this.routingService.isPreviousRoute(Routes.AccountsDetails) === false) {
             this.pushRoute(
                 this.routingService.createRoute(Routes.AccountsDetails, {
                     query: { id: `${this.accountId}`},
@@ -83,8 +88,21 @@ export default class AccountsSecurity extends Vue {
     }
 
     private save (){
-        console.log("save");
-        console.log(this.accountId);
+       const accountsSecurity = new AccountSecurityModel({
+           accountId: this.accountId,
+           id: this.id,
+           securityId: this.securityId,
+           shares: this.shares,
+       });
+
+       switch(this.id){
+           case 0:
+               this.addSecurity(accountsSecurity);
+               return;
+           default:
+               this.updateSecurity(accountsSecurity);
+               return;
+       }
     }
 
 }

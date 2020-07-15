@@ -47,6 +47,11 @@ export class AccountSecurityModel {
     public set security(security: SecurityModel) {
         this._security = security;
     }
+
+    public set securityId(securityId: number){
+        this._securityId = securityId;
+    }
+
     public get securityId() {
         return this._securityId;
     }

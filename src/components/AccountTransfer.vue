@@ -10,7 +10,7 @@ div
         div.transfer-from
             label(v-if="transfer") From
             div.input {{ accountName }}
-        div.transfer-to
+        div.transfer-to(v-if="transfer")
             label To
             select(
                 v-model="accountId"
@@ -44,7 +44,7 @@ export default class AccountTransfer extends Vue{
         this.accountName = account.name;
     }
 
-    @Emit()
+    @Emit('change:accountChange')
     private change(e: Event){
         e.preventDefault();
         return this.accountId;
@@ -61,7 +61,6 @@ export default class AccountTransfer extends Vue{
 .transfer-inputs
     display: flex
     margin-right: 0.125rem
-    padding: 0 0.25rem
     display: flex
     flex-direction: column
     align-items: stretch
@@ -75,4 +74,10 @@ export default class AccountTransfer extends Vue{
         font-size: 14px
     select
         width: 100%
+
+div.input
+    background: #eee
+    padding: 5px 0
+    margin: 10px 0;
+
 </style>

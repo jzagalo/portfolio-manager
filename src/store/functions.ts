@@ -25,17 +25,23 @@ export function undefinedMessage(entityName: string, id: number, stateIndex: num
          state index of ${stateIndex}`;
 }
 
-export function add<T extends IStateItem>(state: IState<T>, item: T, func: (item: T) => string | number, options?: ISortOptions,){
+export function add<T extends IStateItem>(state: IState<T>, item: T, func?: (item: T) => string | number, options?: ISortOptions,){
     if(typeof item === "undefined"){
         throw new Error(`Cannot add 'undefined' item to the store`);
-    } 
+    }
 
     if(item === null){
         throw new Error(`Cannot add 'null' item to the store`);
     }
 
     item.id = state.index;
-    state.items = sort([...state.items, item], func, options);
+    const items = [...state.items, item ];
+
+    if(typeof func !== "undefined"){
+        state.items = sort(items, func, options);
+    }else {
+        state.items = items;
+    }
     state.index += 1;
 }
 

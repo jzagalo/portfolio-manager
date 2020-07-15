@@ -49,3 +49,6 @@ export interface IAccountState{
 
 export type AddAccountPayload = string;
 export type RemoveAccountPayload = number;
+export type PayloadAddAccountSecurity = AccountSecurityModel;
+export type PayloadUpdateAccountSecurity = AccountSecurityModel;
+export type PayloadRemoveAccountSecurity = AccountSecurityModel;
