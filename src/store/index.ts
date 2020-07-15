@@ -15,3 +15,4 @@ export * from "./security-descriptor";
 export * from "./security-types";
 export * from "@/store/account-deposit-model";
 export * from "@/store/account-security-model";
+export * from "@/store/account-model";

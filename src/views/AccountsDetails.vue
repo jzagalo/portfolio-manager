@@ -75,7 +75,7 @@ export default class AccountsDetails extends Vue {
     private readonly currency = currencyFormatter();
 
     private accountDeposits: AccountDepositModel[] = [];
-    private accountSecurities: AccountSecurityModel[]= [];
+    private accountSecurities: AccountSecurityModel[] = [];
     private cash = 0;
     private depositTotal = 0;
     private readonly accountSecurityHeadings = ["Symbol", "Value", "Shares"];
@@ -97,8 +97,7 @@ export default class AccountsDetails extends Vue {
 
     public get profit() {
         return this.value - (this.depositTotal - this.cash);
-    }
-    
+    }    
 
     private created(){
         if(this.routingService.isPreviousRoute(Routes.Accounts) === false){
@@ -123,16 +122,20 @@ export default class AccountsDetails extends Vue {
             .reduce((prev, cur) => prev + cur.amount, 0);
     }
 
-    private handleClickAccountDeposit(deposit: AccountDepositModel){
-        console.log(deposit);
+    private handleClickAccountDeposit(deposit: AccountDepositModel) {
+        this.routingService.navigateTo(Routes.AccountsDeposit, {
+            query: { accountId: `${this.id}`,  id: `${deposit.id}` },
+        });
     }
 
     private handleClickAccountSecurity(accountSecurity: AccountSecurityModel){
         console.log(accountSecurity);
     }
 
-    private handleClickCreateAccountDeposit(){
-        console.log("handleClickCreateAccountDeposit");
+    private handleClickCreateAccountDeposit() {
+        this.routingService.navigateTo(Routes.AccountsDeposit, {
+            query: { accountId: `${this.id}`,  id: "0" },
+        });
     }
 
     private handleClickCreateAccountSecurity(){
@@ -167,8 +170,22 @@ export default class AccountsDetails extends Vue {
 </script>
 
 <style lang="sass" scoped>
+
     .inputs
         padding: 0 0.25rem
+        display: flex
+        flex-direction: column
+        align-items: stretch
+
+        > label
+            display: block
+            text-align: left
+        > input
+            padding: 7px 3px
+            margin: 5px 0 15px 0
+            font-size: 14px
+            
+
     .account-stats, .account-security 
         display: flex
         flex-wrap: wrap
@@ -178,8 +195,10 @@ export default class AccountsDetails extends Vue {
         > *
             flex: 1
             min-width: 150px
+            width: 50%
             text-align: center
             margin-bottom: 0.75rem
+
     .list-item-heading
         font-weight: 600
 

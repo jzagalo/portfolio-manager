@@ -40,7 +40,22 @@ export default class DetailsActionButtons extends Vue{
     display: flex
 
     button
-        flex: 1;
+        flex: 1        
+        padding: 10px
+        background: green
+        outline: 0
+        box-shadow: none
+        border: none
+        color: #fff
+        font-weight: 600
+        font-size: 15px
+        margin-bottom: 15px
+
+    
+        &:first-child
+            background: red;
+
+
 
 
 

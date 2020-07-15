@@ -7,6 +7,10 @@ interface IState<T extends IStateItem> {
     items: T[];
 }
 
+interface ISortOptions {
+    descending?: boolean;
+}
+
 export function findAll<T extends IStateItem>(state: IState<T>){
     return state.items;
 }
@@ -21,7 +25,7 @@ export function undefinedMessage(entityName: string, id: number, stateIndex: num
          state index of ${stateIndex}`;
 }
 
-export function add<T extends IStateItem>(state: IState<T>, item: T, func: (item: T) => string){
+export function add<T extends IStateItem>(state: IState<T>, item: T, func: (item: T) => string | number, options?: ISortOptions,){
     if(typeof item === "undefined"){
         throw new Error(`Cannot add 'undefined' item to the store`);
     } 
@@ -31,17 +35,59 @@ export function add<T extends IStateItem>(state: IState<T>, item: T, func: (item
     }
 
     item.id = state.index;
-    state.items = sort([...state.items, item], func);
+    state.items = sort([...state.items, item], func, options);
     state.index += 1;
 }
 
-export function sort<T>(items: T[], func: (item: T) => string){
-    return items.sort((a,b) =>{
-        const aStr = func(a).toUpperCase();
-        const bStr = func(b).toUpperCase();
-        if(aStr < bStr) return -1;
-        if(aStr > bStr) return 1;
-        return 0;
+function sortAscending(a: string | number, b: string | number) {
+    if (a < b) {
+        return -1;
+    }
+    if (a > b) {
+        return 1;
+    }
+    return 0;
+}
+
+function sortDescending(a: string | number, b: string | number) {
+    if (a > b) {
+        return -1;
+    }
+    if (a < b) {
+        return 1;
+    }
+    return 0;
+}
+
+export function sort<T>(items: T[], func: (item: T) => string | number, options?: ISortOptions) {
+    return items.sort((a, b) => {
+        const funcA = func(a);
+        const funcB = func(b);
+        let valueA: string | number;
+        let valueB: string | number;
+        if (typeof funcA === "string" && typeof funcB === "string") {
+            valueA = funcA.toUpperCase();
+            valueB = funcB.toUpperCase();
+        } else if (
+            (typeof funcA === "number" && typeof funcB === "number") ||
+            (typeof funcA === "bigint" && typeof funcB === "bigint")
+        ) {
+            valueA = funcA;
+            valueB = funcB;
+        } else {
+            throw new Error(
+                "The result of calling the provided function must be to convert items into string or numbers.",
+            );
+        }
+        if (
+            typeof options === "undefined" ||
+            typeof options.descending === "undefined" ||
+            options.descending === false
+        ) {
+            return sortAscending(valueA, valueB);
+        } else {
+            return sortDescending(valueA, valueB);
+        }
     });
 }
 

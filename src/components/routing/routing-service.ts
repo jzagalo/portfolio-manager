@@ -59,6 +59,16 @@ const accountsDetails = new RouteEntry({
     route: Routes.AccountsDetails
 });
 
+const accountsDeposit = new RouteEntry({
+    component: () => import(/* webpackChunkName: "accounts-deposit" */ "../../views/AccountsDeposit.vue"),
+    name: "accounts-deposit",
+    parent: accountsDetails,
+    path: "/accounts-deposit",
+    route: Routes.AccountsDeposit,
+});
+
+
+
 export class RoutingService {
     private readonly _navigate = new Subject<IRoute>();
     private readonly _navigate$ = this._navigate.asObservable();
@@ -80,7 +90,8 @@ export class RoutingService {
         [Routes.Accounts, accounts ],
         [Routes.Securities, securities ],
         [Routes.SecuritiesDetails, securitiesDetails ],
-        [Routes.AccountsDetails, accountsDetails ]
+        [Routes.AccountsDetails, accountsDetails ],
+        [Routes.AccountsDeposit, accountsDeposit ],
     ]);
 
     private readonly _values = Array.from(this._routes.values());

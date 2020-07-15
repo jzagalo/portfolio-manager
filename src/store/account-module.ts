@@ -1,5 +1,8 @@
 import {  Store } from "vuex";
+import moment from "moment";
 import { ACTION_ADD_ACCOUNT, ACTION_REMOVE_ACCOUNT,
+         ACTION_ADD_ACCOUNT_DEPOSIT, ACTION_UPDATE_ACCOUNT_DEPOSIT,
+         MUTATION_ADD_ACCOUNT_DEPOSIT, MUTATION_UPDATE_ACCOUNT_DEPOSIT,
          MUTATION_ADD_ACCOUNT, MUTATION_REMOVE_ACCOUNT,
          STATE_ACCOUNTS, GETTER_ACCOUNT, GETTER_ACCOUNTS,
          STATE_ACCOUNTS_DEPOSITS, STATE_ACCOUNTS_SECURITIES,
@@ -13,11 +16,14 @@ import { AccountModel } from "./account-model";
 import { initialState as accountState } from "@/store/account-initial-state";
 import { initialState as depositState } from "@/store/account-deposit-initial-state";
 import { initialState as securityState } from "@/store/account-security-initial-state";
-import { IAccountGetters, IAccountState, PayloadAddAccount, PayloadRemoveAccount } from "@/store/account-types";
+import { IAccountGetters, IAccountState, 
+        PayloadAddAccount, PayloadRemoveAccount,
+        PayloadAddAccountDeposit, PayloadUpdateAccountDeposit,
+         } from "@/store/account-types";
 import { AddAccountPayload, RemoveAccountPayload, StoreActionTree, 
         StoreContext, StoreMutationTree } from "@/store";
 import { StoreActions, StoreActionValidator } from "@/store/store-action-validators";
-import { add, findById, remove, undefinedMessage } from "@/store/functions";
+import { add, findById, remove, undefinedMessage, sort } from "@/store/functions";
 
 const storeActionValidator = new StoreActionValidator();
 
@@ -27,7 +33,13 @@ export const accountActions: StoreActionTree = {
     },
     [ACTION_REMOVE_ACCOUNT](this: Store<IStoreState>, {commit}: StoreContext, id: RemoveAccountPayload){
         commit(MUTATION_REMOVE_ACCOUNT, id);
-    }
+    },
+    [ACTION_ADD_ACCOUNT_DEPOSIT](this, { commit }, payload: PayloadAddAccountDeposit) {
+        commit(MUTATION_ADD_ACCOUNT_DEPOSIT, payload);
+    },  
+    [ACTION_UPDATE_ACCOUNT_DEPOSIT](this, { commit }, payload: PayloadUpdateAccountDeposit) {
+        commit(MUTATION_UPDATE_ACCOUNT_DEPOSIT, payload);
+    },
 } 
 
 export const accountGetters: StoreGetterTree = {
@@ -116,7 +128,26 @@ export const accountMutations: StoreMutationTree = {
     },
     [MUTATION_REMOVE_ACCOUNT](state: IStoreState, payload: RemoveAccountPayload){
         state[STATE_ACCOUNTS].items = state[STATE_ACCOUNTS].items.filter((x) => x.id !== payload);
-    }
+    },
+    [MUTATION_ADD_ACCOUNT_DEPOSIT](storeState, payload: PayloadAddAccountDeposit) {
+        add(storeState[STATE_ACCOUNTS_DEPOSITS], payload, (x) => moment(x.date).valueOf(), { descending: true });
+    },
+    [MUTATION_UPDATE_ACCOUNT_DEPOSIT](storeState, payload: PayloadUpdateAccountDeposit) {
+        const state = storeState[STATE_ACCOUNTS_DEPOSITS];
+        const deposit = findById(state, payload.id)!;
+
+        storeActionValidator
+            .begin()
+            .while(StoreActions.Updating)
+            .throwIf(deposit)
+            .isUndefined(undefinedMessage("deposit", payload.id, state.index));
+
+        deposit.accountId = payload.accountId;
+        deposit.amount = payload.amount;
+        deposit.date = payload.date;
+
+        state.items = sort(state.items, (x) => moment(x.date).valueOf(), { descending: true });
+    },
 }
 
 export const accountsState = {
