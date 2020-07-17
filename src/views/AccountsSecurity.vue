@@ -31,7 +31,7 @@ import {    Action, ActionFn, ACTION_PUSH_ROUTE, Getter,
             PayloadUpdateAccountSecurity,
             GETTER_ACCOUNT_SECURITY, GETTER_SECURITIES,
             GetterAccountSecurity, PayloadPushRoute,
-            SecurityModel,
+            SecurityModel, 
         } from '@/store';
 
 interface IQuery {

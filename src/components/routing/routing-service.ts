@@ -75,6 +75,14 @@ const accountsSecurity = new RouteEntry({
     route: Routes.AccountsSecurity,
 });
 
+const planner = new RouteEntry({
+    component: () => import(/* webpackChunkName: "accounts-deposit" */ "../../views/Planner.vue"),
+    name: "planner",
+    parent: home,
+    path: "/planner",
+    route: Routes.Planner,
+});
+
 
 
 
@@ -102,6 +110,7 @@ export class RoutingService {
         [Routes.AccountsDetails, accountsDetails ],
         [Routes.AccountsDeposit, accountsDeposit ],
         [Routes.AccountsSecurity, accountsSecurity ],
+        [Routes.Planner, planner ],
     ]);
 
     private readonly _values = Array.from(this._routes.values());

@@ -44,7 +44,7 @@ export default class AccountTransfer extends Vue{
         this.accountName = account.name;
     }
 
-    @Emit('change:accountChange')
+    @Emit()
     private change(e: Event){
         e.preventDefault();
         return this.accountId;

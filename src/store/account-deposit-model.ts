@@ -37,10 +37,10 @@ export class AccountDepositModel {
 
     public get amount() {
         return this._amount;
-    }
-    
-    public set amount(amount : number) {
-        this.amount = amount;
+    }   
+
+    public set amount(amount: number) {
+         this._amount = amount;
     }
 
     public get date()  {

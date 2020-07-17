@@ -43,13 +43,8 @@ export const accountActions: StoreActionTree = {
     },
     [ACTION_UPDATE_ACCOUNT_DEPOSIT](this, { commit }, payload: PayloadUpdateAccountDeposit) {
         commit(MUTATION_UPDATE_ACCOUNT_DEPOSIT, payload);
-    },
-    [ACTION_ADD_ACCOUNT_SECURITY](this, { commit }, payload: PayloadAddAccountSecurity) {
-        commit(MUTATION_ADD_ACCOUNT_SECURITY, payload);
-    },
+    },    
     [ACTION_UPDATE_ACCOUNT_SECURITY](this, { commit }, payload: PayloadUpdateAccountSecurity) {
-        console.log("PAyload");
-        console.log(payload);
         commit(MUTATION_UPDATE_ACCOUNT_SECURITY, payload);
     },
     [ACTION_ADD_ACCOUNT_SECURITY](this, { commit }, payload: PayloadAddAccountSecurity) {
@@ -172,6 +167,7 @@ export const accountMutations: StoreMutationTree = {
             .while(StoreActions.Updating)
             .throwIf(deposit)
             .isUndefined(undefinedMessage("deposit", payload.id, state.index));
+            
 
         deposit.accountId = payload.accountId;
         deposit.amount = payload.amount;

@@ -10,6 +10,7 @@ import { AccountSecurityModel } from "@/store/account-security-model";
 
 export type PayloadAddAccountDeposit = AccountDepositModel;
 export type PayloadUpdateAccountDeposit = AccountDepositModel;
+
 export type GetterAccount = (id: number) => AccountModel;
 export type PayloadAddAccount = AccountModel;
 export type PayloadRemoveAccount = number;

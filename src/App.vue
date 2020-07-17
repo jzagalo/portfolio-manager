@@ -49,7 +49,8 @@ export default class App extends Vue {}
   grid-area: app
   position: fixed
   bottom: 0
-  left: 45%   
+  left: 0
+  right: 0 
 
 
   #nav

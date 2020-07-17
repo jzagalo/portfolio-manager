@@ -80,7 +80,14 @@ ul
 
     .list-item-text
         flex: 1
-        list-style-type: none
+        
+        .account-deposit
+            display: flex
+
+            span
+                flex: 1
+        
+
 
     &.create
             background-color: green

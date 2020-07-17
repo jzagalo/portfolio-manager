@@ -29,6 +29,7 @@ import { Vue, Component, Inject} from 'vue-property-decorator';
 import { Routes, RoutingService } from "@/components/routing";
 import { AccountDepositModel, Action, ActionFn,
         ACTION_PUSH_ROUTE, Getter, GETTER_ACCOUNT_DEPOSIT,
+        GETTER_ACCOUNT, GetterAccount,
         ACTION_ADD_ACCOUNT_DEPOSIT, ACTION_UPDATE_ACCOUNT_DEPOSIT,
         PayloadAddAccountDeposit, PayloadUpdateAccountDeposit,
         GetterAccountDeposit, PayloadPushRoute
@@ -51,10 +52,12 @@ export default class AccountsDeposit extends Vue {
     @Action(ACTION_ADD_ACCOUNT_DEPOSIT) private readonly addDeposit!: ActionFn<PayloadAddAccountDeposit>;
     @Action(ACTION_UPDATE_ACCOUNT_DEPOSIT) private readonly updateDeposit!: ActionFn<PayloadUpdateAccountDeposit>;
     @Getter(GETTER_ACCOUNT_DEPOSIT) private readonly getterDeposit!: GetterAccountDeposit;
+    @Getter(GETTER_ACCOUNT) private readonly getterAccount!: GetterAccount;
 
     @Inject() private readonly routingService!: RoutingService;
 
     private accountId = 0;
+    private accountName = "";
     private id = 0;
     private amount = 0;
     private date = moment(Date.now()).format("YYYY-MM-DD");
@@ -62,7 +65,7 @@ export default class AccountsDeposit extends Vue {
     private created(){
         this.id = this.routingService.queryParam<IQuery, number>((x) => x.id, parseInt);
         this.accountId = this.routingService.queryParam<IQuery, number>((x) => x.accountId, parseInt);
-
+        const account = this.getterAccount(this.accountId); 
 
         if(this.routingService.isPreviousRoute(Routes.AccountsDetails) === false) {
             this.pushRoute(
@@ -85,20 +88,15 @@ export default class AccountsDeposit extends Vue {
 
     private load(){
         const deposit = this.getterDeposit(this.id);
+        this.accountName = deposit.account.name;
         this.amount = deposit.amount;
         this.date = moment(deposit.date).format("YYYY-MM-DD");
-        this.accountId = deposit.accountId;
-
-        if(this.routingService.isPreviousRoute(Routes.AccountsDetails) === false) {
-            this.pushRoute(
-                this.routingService.createRoute(Routes.AccountsDetails,{
-                    query: { id: `${this.accountId}`}
-                }),
-            );
-        }
+       
     }
 
     private save(){
+        console.log("logging");
+        console.log(this.accountId);
        const deposit = new AccountDepositModel({
            accountId: this.accountId,
            amount: this.amount,
@@ -110,6 +108,7 @@ export default class AccountsDeposit extends Vue {
            case 0:
              this.addDeposit(deposit);
              return;
+
            default:
              this.updateDeposit(deposit);
              return;
@@ -137,5 +136,10 @@ export default class AccountsDeposit extends Vue {
         font-size: 14px
     select
         width: 100%
+.account-deposit
+    display: flex
+
+    > span
+        flex: 1
 
 </style>

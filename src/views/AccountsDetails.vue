@@ -191,7 +191,7 @@ export default class AccountsDetails extends Vue {
             font-size: 14px
 
 
-    .account-stats, .account-security
+    .account-stats, .account-security, .account-deposit
         display: flex
         flex-wrap: wrap
         border: 1px solid #eee
@@ -205,6 +205,8 @@ export default class AccountsDetails extends Vue {
             margin-bottom: 0.75rem
 
     .list-item-heading
-        font-weight: 600
+        font-weight: 600   
+           
+
 
 </style>

@@ -200,8 +200,13 @@ export default class Securities extends Vue {
             pointer-events: none
 
         .list-item-text
-            flex: 1
+            flex: 1 
 
+            .account-deposit
+                display: flex
+
+                > *
+                    flex: 1
 
 
     /deep/ .tab-headings li a

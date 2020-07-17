@@ -5,6 +5,7 @@ import {
     faAngleLeft,
     faCog,
     faMoneyBill,
+    faChartPie,
     faPlus,
     faTimes,
     faHome,
@@ -18,4 +19,5 @@ library.add(faWallet);
 library.add(faPlus);
 library.add(faTimes);
 library.add(faMoneyBill);
+library.add(faChartPie);
 Vue.component("FontAwesomeIcon", FontAwesomeIcon);
