@@ -5,18 +5,22 @@ import { accountActions, accountsState, accountMutations,
 accountGetters } from "@/store/account-module";
 import { routeActions,routeState, routeMutations } from "./route-module";
 import { securitiesState, securitiesActions, securitiesMutations, securitiesGetters } from "@/store/security-module";
+import { portfolioState, portfolioGetters, } from "@/store/portfolio-module";
+
 
 Vue.use(Vuex)
 
 const state: IStoreState = {
   ...accountsState,
   ...routeState,
-  ...securitiesState
+  ...securitiesState,
+  ...portfolioState
 };
 
 const getters = {
   ...securitiesGetters,
   ...accountGetters,
+  ...portfolioGetters,
 };
 
 const actions = {

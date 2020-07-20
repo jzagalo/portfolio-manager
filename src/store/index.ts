@@ -16,3 +16,6 @@ export * from "./security-types";
 export * from "@/store/account-deposit-model";
 export * from "@/store/account-security-model";
 export * from "@/store/account-model";
+export * from "@/store/portfolio-category-model";
+export * from "@/store/portfolio-plan-model";
+export * from "@/store/portfolio-types";

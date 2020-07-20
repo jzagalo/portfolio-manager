@@ -5,17 +5,18 @@ export interface IPortfolioCategoryModelConfig {
     categoryId: number;
     id: number;
     percent: number;
-    portfolioId: number;
+    planId: number;
 }
 
 export class PortfolioCategoryModel {
     private _category: SecurityCategoryModel | null = null;
     private _categoryId: number;
     private _id: number;
-    private _percent: number;
-    private _portfolioId: number; 
+    private _percent: number;    
     private _portfolio: PortfolioPlanModel | null = null; 
-    
+    private _plan: PortfolioPlanModel | null = null;
+    private _planId: number;    
+
     public get category() {
         return this._category;
     }
@@ -30,6 +31,14 @@ export class PortfolioCategoryModel {
 
     public set id(v : number) {
         this._id = v;
+    }  
+    
+    public get categoryId() {
+        return this._categoryId;
+    }
+
+    public set categoryId(categoryId: number) {
+        this._categoryId = categoryId;
     }    
     
     public get percent() {
@@ -40,26 +49,26 @@ export class PortfolioCategoryModel {
         this._percent = v;
     }    
     
-    public get portfolioId() {
-        return this._portfolioId;
+    public get planId() {
+        return this._planId;
     }
 
-    public set portfolioId(v : number) {
-        this._portfolioId = v;
+    public set planId(v : number) {
+        this._planId = v;
     }
     
-    public get portfolio() {
-        return this._portfolio;
+    public get plan() {
+        return this._plan;
     }
     
-    public setPortfolio(v : PortfolioPlanModel) {
-        this._portfolio = v;
+    public setPlan(plan : PortfolioPlanModel) {
+        this._plan = plan;
     }    
 
     constructor(config: IPortfolioCategoryModelConfig){
         this._categoryId = config.categoryId;
         this._id = config.id;
-        this._percent = config.percent;
-        this._portfolioId = config.portfolioId;
+        this._percent = config.percent;        
+        this._planId = config.planId;
     }    
 }

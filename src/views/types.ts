@@ -6,4 +6,5 @@ export enum SecurityDescriptors {
     Segments,
     Territories,
     Types,
+    PlannerDetails,
 }

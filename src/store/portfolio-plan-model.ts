@@ -26,12 +26,18 @@ export class PortfolioPlanModel {
     public set id(v : number) {
         this._id = v;
     }
+
+    public get name() {
+        return this._name;
+    }
+    
+    public set name(v : string) {
+        this._name = v;
+    }
     
     constructor(config: IPortfolioPlanConfig) {
         this._categories = config.categories;
         this._id = config.id;
         this._name = config.name;
-    }
-    
-    
+    }    
 }

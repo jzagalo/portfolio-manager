@@ -20,14 +20,14 @@ if (process.env.NODE_ENV === "development") {
     const ifdm = securityCategoryInitialState.items.find((x) => x.id === 7)!;
     const dsdm = securityCategoryInitialState.items.find((x) => x.id === 8)!;
 
-    const catDelc = new PortfolioCategoryModel({ categoryId: delc.id, id: 1, percent: 38, portfolioId: growth.id });
-    const catDemc = new PortfolioCategoryModel({ categoryId: demc.id, id: 2, percent: 12, portfolioId: growth.id });
-    const catDesc = new PortfolioCategoryModel({ categoryId: desc.id, id: 3, percent: 6, portfolioId: growth.id });
-    const catIedm = new PortfolioCategoryModel({ categoryId: iedm.id, id: 4, percent: 18, portfolioId: growth.id });
-    const catIeem = new PortfolioCategoryModel({ categoryId: ieem.id, id: 5, percent: 7, portfolioId: growth.id });
-    const catDfdm = new PortfolioCategoryModel({ categoryId: dfdm.id, id: 6, percent: 13, portfolioId: growth.id });
-    const catIfdm = new PortfolioCategoryModel({ categoryId: ifdm.id, id: 7, percent: 3, portfolioId: growth.id });
-    const catDsdm = new PortfolioCategoryModel({ categoryId: dsdm.id, id: 8, percent: 3, portfolioId: growth.id });
+    const catDelc = new PortfolioCategoryModel({ categoryId: delc.id, id: 1, percent: 38, planId: growth.id });
+    const catDemc = new PortfolioCategoryModel({ categoryId: demc.id, id: 2, percent: 12, planId: growth.id });
+    const catDesc = new PortfolioCategoryModel({ categoryId: desc.id, id: 3, percent: 6,  planId: growth.id });
+    const catIedm = new PortfolioCategoryModel({ categoryId: iedm.id, id: 4, percent: 18, planId: growth.id });
+    const catIeem = new PortfolioCategoryModel({ categoryId: ieem.id, id: 5, percent: 7,  planId: growth.id });
+    const catDfdm = new PortfolioCategoryModel({ categoryId: dfdm.id, id: 6, percent: 13, planId: growth.id });
+    const catIfdm = new PortfolioCategoryModel({ categoryId: ifdm.id, id: 7, percent: 3,  planId: growth.id });
+    const catDsdm = new PortfolioCategoryModel({ categoryId: dsdm.id, id: 8, percent: 3,  planId: growth.id });
 
     categories.push(catDelc);
     categories.push(catDemc);
