@@ -18,6 +18,9 @@ export class PortfolioCategoryModel {
     private _planId: number;    
 
     public get category() {
+        if(this._category === null){
+            throw new Error("This category has not been defined");
+        }
         return this._category;
     }
 
@@ -58,6 +61,9 @@ export class PortfolioCategoryModel {
     }
     
     public get plan() {
+        if(this._plan === null){
+            throw new Error("This plan has not been defined");
+        }
         return this._plan;
     }
     
@@ -70,5 +76,23 @@ export class PortfolioCategoryModel {
         this._id = config.id;
         this._percent = config.percent;        
         this._planId = config.planId;
-    }    
+    } 
+
+    public clone(){
+        const model = new PortfolioCategoryModel({
+            categoryId: this.categoryId,
+            id: this.id,
+            percent: this.percent,
+            planId: this.planId,
+        });
+
+        if(this._category !== null){
+            model.setCategory(this.category);
+        }
+        if(this._plan !== null){
+            model.setPlan(this.plan);
+        }
+
+        return model;
+    }   
 }

@@ -24,7 +24,10 @@ export interface IPortfolioState {
 
 export type GetterPortfolioCategory = (id: number) => PortfolioCategoryModel;
 export type GetterPortfolioCategories = (planId: number) => PortfolioCategoryModel[];
-export type GetterPortfolioPlan = (id: number) => PortfolioPlanModel
+export type GetterPortfolioPlan = (id: number) => PortfolioPlanModel;
+
+export type PayloadAddPortfolioPlan = PortfolioPlanModel;
+export type PayloadUpdatePortfolioPlan = PortfolioPlanModel;
 
 export interface IPortfolioGetters {
     [GETTER_PORTFOLIO_CATEGORIES]: GetterPortfolioCategories;

@@ -43,6 +43,8 @@ export function add<T extends IStateItem>(state: IState<T>, item: T, func?: (ite
         state.items = items;
     }
     state.index += 1;
+
+    return item;
 }
 
 function sortAscending(a: string | number, b: string | number) {

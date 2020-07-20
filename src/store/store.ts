@@ -5,7 +5,7 @@ import { accountActions, accountsState, accountMutations,
 accountGetters } from "@/store/account-module";
 import { routeActions,routeState, routeMutations } from "./route-module";
 import { securitiesState, securitiesActions, securitiesMutations, securitiesGetters } from "@/store/security-module";
-import { portfolioState, portfolioGetters, } from "@/store/portfolio-module";
+import { portfolioState, portfolioGetters, portfolioActions, portfolioMutations, } from "@/store/portfolio-module";
 
 
 Vue.use(Vuex)
@@ -27,12 +27,14 @@ const actions = {
   ...accountActions,
   ...routeActions,
   ...securitiesActions,
+  ...portfolioActions,
 }; 
 
 const mutations = {
   ...accountMutations,
   ...routeMutations,
   ...securitiesMutations,
+  ...portfolioMutations,
 };
 
 export default new Vuex.Store({
