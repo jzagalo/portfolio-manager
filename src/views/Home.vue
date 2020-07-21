@@ -23,7 +23,7 @@
                         div {{ acctSecurity.security.symbol }}
                         div {{ acctSecurity.account.name }}
                         div {{ acctSecurity.shares }}
-                        div {{ currency.format(accountSecurity.security.last)}}
+                        div {{ currency.format(acctSecurity.security.last)}}
         
 </template>
 
