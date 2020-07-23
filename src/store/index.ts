@@ -19,3 +19,4 @@ export * from "@/store/account-model";
 export * from "@/store/portfolio-category-model";
 export * from "@/store/portfolio-plan-model";
 export * from "@/store/portfolio-types";
+export * from "@/store/functions";

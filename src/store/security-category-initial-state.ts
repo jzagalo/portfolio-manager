@@ -31,14 +31,16 @@ function createCategory(config: ISecurityCategoryModelConfig) {
 }
 
 let index = 1;
-index = createCategory({ id: index, segmentId: largeCap.id, territoryId: domestic.id, typeId: equity.id });
-index = createCategory({ id: index, segmentId: midCap.id, territoryId: domestic.id, typeId: equity.id });
-index = createCategory({ id: index, segmentId: smallCap.id, territoryId: domestic.id, typeId: equity.id });
-index = createCategory({ id: index, segmentId: developed.id, territoryId: international.id, typeId: equity.id });
-index = createCategory({ id: index, segmentId: emerging.id, territoryId: international.id, typeId: equity.id });
-index = createCategory({ id: index, segmentId: developed.id, territoryId: domestic.id, typeId: fixedIncome.id });
-index = createCategory({ id: index, segmentId: developed.id, territoryId: international.id, typeId: fixedIncome.id });
-index = createCategory({ id: index, segmentId: developed.id, territoryId: domestic.id, typeId: specialty.id });
+index = createCategory({ color: "#fc8279", id: index, segmentId: largeCap.id, territoryId: domestic.id, typeId: equity.id });
+index = createCategory({ color: "#fcb479", id: index, segmentId: midCap.id, territoryId: domestic.id, typeId: equity.id });
+index = createCategory({ color: "#fcf579", id: index, segmentId: smallCap.id, territoryId: domestic.id, typeId: equity.id });
+index = createCategory({ color: "#c5fc79", id: index, segmentId: developed.id, territoryId: international.id, typeId: equity.id });
+index = createCategory({ color: "#79fcd7", id: index, segmentId: emerging.id, territoryId: international.id, typeId: equity.id });
+index = createCategory({ color: "#79dbf7", id: index, segmentId: developed.id, territoryId: domestic.id, typeId: fixedIncome.id });
+index = createCategory({ color: "#b679fc",id: index, segmentId: developed.id, territoryId: international.id, typeId: fixedIncome.id });
+index = createCategory({ color: "#fc79dd", id: index, segmentId: developed.id, territoryId: domestic.id, typeId: specialty.id });
+
+
 
 export const initialState: ISecurityCategoryModelState = {
     index,

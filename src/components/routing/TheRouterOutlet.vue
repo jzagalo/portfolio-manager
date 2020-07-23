@@ -132,5 +132,7 @@ export default class TheRouterOutlet extends Vue{
             overflow-x: hidden
     .router-view-animatable
         flex: 1
+    .router-view-animatable
+        overflow: auto
 
 </style>

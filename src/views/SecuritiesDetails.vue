@@ -257,8 +257,10 @@ export default class SecuritiesDetails extends Vue{
                     id: this.id,
                     segmentId: this.categorySegment!.id,
                     territoryId: this.categoryTerritory!.id,
-                    typeId:this.categoryType!.id,
+                    typeId: this.categoryType!.id,
+                    color: "#ddd",
                 });
+
                 switch(this.id) {
                     case 0:
                         this.addCategory(category);
